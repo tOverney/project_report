@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\begin{document}
+
+\title{Benchmarking Fermi Microarchitecture}
+\author{Tristan Overney, Cl\'{e}ment Humbert}
+\date{\today}
+\maketitle
+
+\section{Goals}
+	The goals of this research is to expose the microarchitecture implemented by
+	Nvidia Fermi cards such as: pipeline length, instructions latency, scheduling
+	patterns.
+
+\section{Methods}
+	To achieve the aforementionned goals, a serie of specially crafted CUDA kernels
+	were used. These usually contain large batches of dependent instructions that were 
+	timed with the assistance of the clock64() function offered by the CUDA API.
+
+	The benchmark programs have been ran on a machine equipped with a: 
+	Nvidia GeForce GTX 580.
+
+\section{Integers multiplication benchmarking}
+	This section contains the results obtained through the previously described
+	methods using large batches of integer multiplications.
+
+	\subsection{Integer multiplication: threads starting times}
+	\includegraphics[width=\linewidth]{"starting_times"}
+	\pagebreak
+
+	\subsection{Integer multiplication: threads ending times against thread ids}
+	\includegraphics[width=\linewidth]{"ending_times"}
+	\pagebreak
+
+	\subsection{Threads total running time against thread ids}
+	\includegraphics[width=\linewidth]{"running_times"}
+	\pagebreak
+
+	\subsection{Threads running times divided by number of multplications}
+	\includegraphics[width=\linewidth]{"latency_estimate"}
+	\pagebreak
+
+\section{Interpretation}
+\end{document}
