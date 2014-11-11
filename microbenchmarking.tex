@@ -4,12 +4,12 @@
 \begin{document}
 
 \title{Benchmarking Fermi Microarchitecture}
-\author{Tristan Overney, Cl\'{e}ment Humbert}
+\author{Paolo Ienne, Andrea Miele\and Ewaida Moshen, Cl\'{e}ment Humbert, Tristan Overney}
 \date{\today}
 \maketitle
 
 \section{Goals}
-	The goals of this research is to expose the microarchitecture implemented by
+	The goals of this research is to expose the Fermi microarchitecture implemented by
 	Nvidia Fermi cards such as: pipeline length, instructions latency, scheduling
 	patterns.
 
@@ -38,8 +38,20 @@
 	\pagebreak
 
 \section{Mixing floating points and integer multiplication}
+	\subsection{Description of the experiment}
+	Informations have been found which were implying that the throughput for Integer multiplication was half the floating point multiplication throughput because only one of the two 16 cores group of an SM was provisionned with Integer multiplier.
+	The following result are an attempt to verify those informations.
 	\subsection{Benchmark running times, 1 floating points for 1 integer multiplication}
-	\includegraphics[width=\linewidth]{"graphics/running_times_ratio11"}
+	If indeed only 1 out of 2 cores group can run integer multiplication then adding the same amount of multiplication but in floating point should not increase the total time spent executing our multiplications as the floating point multiplication can be run on the other core group (the one that does not possess integer multiplication).
+	
+	One million multiplication of each kind has been ran on 1 to 1024 threads to see if the results were comparable to the graph were there was only integer multiplication.
+	\begin{figure}[h]
+		\centering
+		\vspace{-20pt}
+    			\includegraphics[width=.5\linewidth]{"graphics/running_times_ratio11"}
+		\vspace{-20pt}
+		\caption{Integer/Floating point multiplication ration: 1}
+	\end{figure}
 	\pagebreak
 
 	\subsection{Benchmark running times, 2 floating points for 1 integer multiplication}
