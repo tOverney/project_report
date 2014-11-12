@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{graphicx}
+\def \scalingfactor{.8}
 
 \begin{document}
 
@@ -19,50 +20,62 @@
 
 	The benchmark programs have been ran on a machine equipped with an: 
 	Nvidia GeForce GTX 580.
+	\pagebreak
 
-\section{Integers multiplication}
+\section{Average clock cycles per multiplications}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
 
 	\subsection{Benchmark running times against number of threads}
     \begin{figure}[h]
-	    \includegraphics[width=\linewidth]{"graphics/running_times"}
+    	\centering
+		\vspace{-20pt}
+	    \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times"}
+		\vspace{-15pt}
         \caption{Running times of benchmark against number of threads}
     \end{figure}
 	\pagebreak
 
 	\subsection{Benchmark running times divided by number of multplications}
-	The same experiment has been ran with floating point multiplications. 
+	\subsubsection{Description of the experiment}
+	The same experiment has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+	\subsubsection{Expectations}
+	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
+	\subsubsection{Results and analysis}
+
 	\begin{figure}[h]
 		\centering
 		\vspace{-20pt}
-    			\includegraphics[width=.5\linewidth]{"graphics/latency_estimate"}
-		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/latency_estimate"}
+		\vspace{-15pt}
 		\caption{Running times of benchmark divided by number of operations against number of threads}
 	\end{figure}
 	\pagebreak
 
-\section{Mixing floating points and integer multiplication}
+\section{Mixing single-precision floating-points and integer multiplication}
 	\subsection{Description of the experiment}
-	Informations have been found which were implying that the throughput for integer multiplication was half the floating point multiplication throughput because only one of the two 16 cores group of an SM was provisionned with integer multiplier.
+	Informations have been found which were implying that the throughput for integer multiplication was half the single-precision floating-point multiplication throughput because only one of the two 16 cores group of an SM was provisionned with integer multiplier.
 	The following result are an attempt to verify those informations.
-	\subsection{Benchmark running times, 1 floating points for 1 integer multiplication}
-	If indeed only 1 out of 2 cores group can run integer multiplication then adding the same amount of multiplication but in floating point should not increase the total time spent executing our multiplications as the floating point multiplication can be run on the other core group (the one that does not possess integer multiplication).
+	\subsection{Benchmark running times, 1 single-precision floating-points for 1 integer multiplication}
+	If indeed only 1 out of 2 cores group can run integer multiplication then adding the same amount of multiplication but in single-precision floating-point should not increase the total time spent executing our multiplications as the single-precision floating-point multiplication can be run on the other core group (the one that does not possess integer multiplication).
 	
 	One million multiplication of each kind has been ran on 1 to 1024 threads to see if the results were comparable to the graph were there was only integer multiplication.
 	\begin{figure}[h]
 		\centering
 		\vspace{-20pt}
-    			\includegraphics[width=\linewidth]{"graphics/running_times_ratio11"}
-		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
+		\vspace{-15pt}
 		\caption{Integer/Floating point multiplication ratio: 1}
 	\end{figure}
 	\pagebreak
 
-	\subsection{Benchmark running times with mixed floating point and integer multiplications}
+	\subsection{Benchmark running times with mixed single-precision floating-point and integer multiplications}
 	\begin{figure}[h]
-        \includegraphics[width=\linewidth]{"graphics/running_times_mixed"}
-        \caption{Running times of benchmarks with a mix of floating points and integers multiplications}
+		\centering
+		\vspace{-20pt}
+        \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_mixed"}
+		\vspace{-15pt}
+        \caption{Running times of benchmarks with a mix of single-precision floating-points and integers multiplications}
     \end{figure}
 	\pagebreak
 
@@ -71,8 +84,11 @@
 \section{Additionnal graphics}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[h]
-	    \includegraphics[width=\linewidth]{"graphics/starting_times_ratio31"}
-	    \caption{Order in which thread batches are started}
+    		\centering
+		\vspace{-20pt}
+	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
+	    	\vspace{-15pt}
+	    	\caption{Order in which thread batches are started}
     \end{figure}
     \pagebreak
 
