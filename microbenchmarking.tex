@@ -25,11 +25,17 @@
 	methods using large batches of integer multiplications.
 
 	\subsection{Benchmark running times against number of threads}
-	\includegraphics[width=\linewidth]{"graphics/running_times"}
+    \begin{figure}[h]
+	    \includegraphics[width=\linewidth]{"graphics/running_times"}
+        \caption{Running times of benchmark against number of threads}
+    \end{figure}
 	\pagebreak
 
-	\subsection{Benchmark running times divided by number of multplications}
-	\includegraphics[width=\linewidth]{"graphics/latency_estimate"}
+    \subsection{Benchmark running times divided by number of multplications}
+    \begin{figure}[h]
+        \includegraphics[width=\linewidth]{"graphics/latency_estimate"}
+        \caption{Running times of benchmark divided by number of operations against number of threads}
+    \end{figure}
 	\pagebreak
 
 \section{Mixing floating points and integer multiplication}
@@ -43,26 +49,28 @@
 	\begin{figure}[h]
 		\centering
 		\vspace{-20pt}
-    			\includegraphics[width=.5\linewidth]{"graphics/running_times_ratio11"}
+    			\includegraphics[width=\linewidth]{"graphics/running_times_ratio11"}
 		\vspace{-20pt}
-		\caption{Integer/Floating point multiplication ration: 1}
+		\caption{Integer/Floating point multiplication ratio: 1}
 	\end{figure}
 	\pagebreak
 
-	\subsection{Benchmark running times, 2 floating points for 1 integer multiplication}
-	\includegraphics[width=\linewidth]{"graphics/running_times_ratio21"}
-	\pagebreak
-
-	\subsection{Benchmark running times, 3 floating points for 1 integer multiplication}
-	\includegraphics[width=\linewidth]{"graphics/running_times_ratio31"}
+	\subsection{Benchmark running times with mixed floating point and integer multiplications}
+	\begin{figure}[h]
+        \includegraphics[width=\linewidth]{"graphics/running_times_mixed"}
+        \caption{Running times of benchmarks with a mix of floating points and integers multiplications}
+    \end{figure}
 	\pagebreak
 
 \section{Interpretation}
 
 \section{Additionnal graphics}
 	\subsection{Integer multiplication: 1024 threads starting times}
-	\includegraphics[width=\linewidth]{"graphics/starting_times_ratio31"}
-	\pagebreak
+    \begin{figure}[h]
+	    \includegraphics[width=\linewidth]{"graphics/starting_times_ratio31"}
+	    \caption{Order in which thread batches are started}
+    \end{figure}
+    \pagebreak
 
 
 \end{document}
