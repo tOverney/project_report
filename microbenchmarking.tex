@@ -27,6 +27,12 @@
 	methods using large batches of integer multiplications.
 
 	\subsection{Benchmark running times against number of threads}
+	\label{sectiondassaut}
+	\subsubsection{Description of the experiment}
+	The following experiment has tried to outline the created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+	\subsubsection{Expectations}
+	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
+	\subsubsection{Results and analysis}
     \begin{figure}[h]
     	\centering
 		\vspace{-20pt}
@@ -38,7 +44,7 @@
 
 	\subsection{Benchmark running times divided by number of multplications}
 	\subsubsection{Description of the experiment}
-	The same experiment has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+	The experiment from \ref{sectiondassaut} has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
 	\subsubsection{Expectations}
 	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
 	\subsubsection{Results and analysis}
