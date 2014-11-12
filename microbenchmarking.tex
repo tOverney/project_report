@@ -42,13 +42,14 @@
 	\subsubsection{Expectations}
 	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
 	\subsubsection{Results and analysis}
-
+	In Figure~\ref{fig:latencyestimate}, the average clock cycles per multiplication for the single-precision floating-point has indeed shown to deteriorate slower than for the integer multiplication. The running time is constant for twice as many threads and then the increase happens every 64 additionnal thread instead of every 32 threads.
 	\begin{figure}[h]
 		\centering
 		\vspace{-20pt}
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/latency_estimate"}
 		\vspace{-15pt}
 		\caption{Running times of benchmark divided by number of operations against number of threads}
+		\label{fig:latencyestimate}
 	\end{figure}
 	\pagebreak
 
