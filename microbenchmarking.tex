@@ -81,7 +81,7 @@
 
 \section{Interpretation}
 
-\section{Additionnal graphics}
+\section{Additionnal graphics and tables}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[h]
     		\centering
@@ -90,6 +90,16 @@
 	    	\vspace{-15pt}
 	    	\caption{Order in which thread batches are started}
     \end{figure}
+
+    \subsection{Graphics intersteps data}
+    The following tables describe the steps between running times in the graphics presented previously. Analysing them may allow to deduce properties of: 
+    \begin{itemize} 
+        \item the pipeline
+        \item the scheduling mechanism. 
+    \end{itemize}
+    \centering
+    \include{intersteps_times_1_SM_int}
+    \include{intersteps_times_1_SM_float}
     \pagebreak
 
 
