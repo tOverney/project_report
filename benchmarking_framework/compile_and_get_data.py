@@ -10,7 +10,7 @@ def read_config(config_file):
     config = {}
 
     for line in fd:
-        # skip comments
+        # skip comments and blank lines
         if line[0] == "#" or line == "\n": continue
 
         # split lines in format key:value
@@ -22,8 +22,7 @@ def read_config(config_file):
     fd.close()
     return config
 
-#default values
-operand_parameters = {"float":["float", "f32", "f"],"int":["unsigned int","lo.u32","r"]}
+#operand_parameters = {"float":["float", "f32", "f"],"int":["unsigned int","lo.u32","r"]}
 
 if __name__ == "__main__":
 

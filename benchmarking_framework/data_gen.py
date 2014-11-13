@@ -7,22 +7,22 @@ from os import mkdir
 from os.path import abspath
 
 def run_benchmark(config, verbose=False):
-    for grid_size in range(config['min_sm'], config['max_sm'] + 1):
+    for grid_size in range(int(config['min_sm']), int(config['max_sm']) + 1):
         try:
             mkdir(abspath(config['output_dir']))
         except: 
             pass
 
-        out_f = open("%s/times_%i_SM.dat"  % (config['output_dir'], grid_size), "w+")
+        out_f = open("%s/times_%i_SM.csv"  % (config['output_dir'], grid_size), "w+")
         out_f.write("\"starting\",\"ending\"\n")
 
-        for n_threads in range(config['min_threads'], config['max_threads'] + 1):
+        for n_threads in range(int(config['min_threads']), int(config['max_threads']) + 1):
             if verbose: 
                 print "    "+unichr(9500)+unichr(9472)+" %i threads, %i SMs" % (n_threads, grid_size)
 
             process = Popen([config['binary'],
                              str(n_threads),
-                             str(config['number_of_operation']/config['unroll_factor']),
+                             str(int(config['number_of_operation'])/int(config['unroll_factor'])),
                              str(grid_size)], stdout=PIPE)
 
             # only values ouputed to stdout are relevant 
