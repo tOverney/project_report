@@ -2,13 +2,12 @@
 #include <cuda.h>
 
 __global__ void loop_mult(DATA_TYPE* a, DATA_TYPE* b, int64_t* times_bef, int64_t* times_aft, int n) {
-    int i;
     int u = blockDim.x * blockIdx.x + threadIdx.x;
     DATA_TYPE op_a = a[u];
     DATA_TYPE op_b = b[u];
 
     times_bef[u] = clock64();   
-for(int i=0, i < n; i++) {
+for(int i=0; i < n; i++) {
 MEASUREMENT_TARGET}
     times_aft[u] = clock64();
     

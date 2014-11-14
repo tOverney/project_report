@@ -3,7 +3,7 @@ from sys import argv, exit
 from subprocess import Popen, PIPE
 
 from code_gen import fill_template
-from data_gen import run_benchmark
+from data_gen import *
 
 def read_config(config_file):
     fd = open(config_file, "r")
@@ -43,5 +43,14 @@ if __name__ == "__main__":
 
     #launch it through gen_data script
     print "[+] Running benchmark"
-    run_benchmark(config, verbose=True)
+    benchmark = ""
+    if config['benchmark_type'] == "individual":
+        benchmark = IndividualTimesBenchmark(config)
+    elif config['benchmark_type'] == "total":
+        benchmark = TotalTimesBenchmark(config)
+    else:
+        print "[!] Unknown benchmark type."
+        exit()
+
+    benchmark.run_benchmark()
     print "[+] Benchmark done."

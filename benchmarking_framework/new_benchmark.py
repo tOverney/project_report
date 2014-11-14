@@ -5,8 +5,8 @@ from os import mkdir, errno
 
 default_config = """#files configurations
 output_dir:./PROJECT_NAME/results/
-source_file:./src/PROJECT_NAME/PROJECT_NAME.cu
-binary:./bin/PROJECT_NAME/PROJECT_NAME
+source_file:./PROJECT_NAME/src/PROJECT_NAME.cu
+binary:./PROJECT_NAME/bin/PROJECT_NAME
 template_file:./for_template.cu
 measurement_target_file:./PROJECT_NAME/target.cu
 
@@ -17,6 +17,8 @@ operand_type_tag:OPERAND_TYPE
 constraint_letter_tag:CONSTRAINT_LETTER
 
 # benchmark running parameters
+# types are: individual, total
+benchmark_type:total
 
 min_threads:1
 max_threads:1024
@@ -27,6 +29,9 @@ max_sm:1
 unroll_factor:1000
 type:float,f32,f
 number_of_operations:1000000
+
+headers:\"starting\",\"ending\"\n
+verbose:1
 """
 
 project_tag = "PROJECT_NAME"
