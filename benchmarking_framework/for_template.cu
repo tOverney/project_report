@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     for( int i=0; i < n_threads; i++) {
         printf("%lu %lu",times_bef[i],times_aft[i]); 
         if(i != n_threads-1) {
-            printf(" \\n"); // allow us to avoid an empty cell in the python
+            printf(" \n"); // allow us to avoid an empty cell in the python
         }
         // format is really important! 
     }

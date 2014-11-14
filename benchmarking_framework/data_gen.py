@@ -51,11 +51,11 @@ class Benchmark(object):
 
 
     def write_data(self):
-        for (filename, data) in self.data:
+        for filename in self.data.keys:
             out_f = open(filename, "w+")
-            out_f.write(self.config['headers'])
+            out_f.write(self.config['headers']+ "\n")
         
-            for el in data:
+            for el in self.data[filename]:
                 out_f.write(el)
             out_f.close()
 
@@ -81,6 +81,9 @@ class IndividualTimesBenchmark(Benchmark):
     """Keeps raw starting and ending times of each threads"""
 
     def collect_data(self, data, grid_size, n_threads):
+        times = []
+        for l in data:
+            times.append("%s,%s" % (l[0], l[1]))
         self.data['%s/times_%i_threads_%i_SM.csv' % (self.config['output_dir'], 
                                                      n_threads,
-                                                     grid_size)] = data
+                                                     grid_size)] = times

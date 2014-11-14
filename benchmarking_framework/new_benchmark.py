@@ -30,7 +30,7 @@ unroll_factor:1000
 type:float,f32,f
 number_of_operations:1000000
 
-headers:\"starting\",\"ending\"\n
+headers:\"starting\",\"ending\"
 verbose:1
 """
 
