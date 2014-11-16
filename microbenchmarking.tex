@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage{graphicx}
+\usepackage{float}
+\usepackage{svg}
 \def \scalingfactor{.8}
 
 \begin{document}
@@ -10,54 +12,96 @@
 \maketitle
 
 \section{Goals}
-	The goals of this research is to expose the Fermi microarchitecture details as implemented 
-    in Nvidia Fermi cards such as: pipeline length, instructions latency, scheduling patterns.
+	The goals of this benchmarking is to expose the Fermi microarchitecture details
+    as implemented in Nvidia Fermi cards (pipeline length, instructions latency,
+    scheduling patterns, etc.) in order to know what can and cannot be changed
+    to create an integer computation oriented device.
 
 \section{Methods}
 	To achieve the aforementioned goals, a serie of specially crafted CUDA kernels
 	were used. These usually contain large batches of dependent instructions that were 
 	timed with the assistance of the \texttt{clock64()} function offered by the CUDA API.
 
-	The benchmark programs have been ran on a machine equipped with an: 
-	Nvidia GeForce GTX 580.
-	\pagebreak
+	The benchmark programs have been ran on a machine equipped with an Nvidia
+    GeForce GTX 580 GPU.
 
-\section{Average clock cycles per multiplications}
+\section{Terminology}
+    Before diving into the experiments and their results here's a quick-start
+    guide to Nvidia's Fermi architecture and its vocabulary:
+
+    \subsection{Streaming Multiprocessors}
+    The largest building block inside the Fermi architecture is the 
+    \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
+    ~\pageref{fig:SM}) abbreviated SM in this report. Fermi cards are equipped
+    with 16 of these SMs.
+    \begin{figure}[H]
+    \centering
+        \includesvg[width=\scalingfactor\linewidth]{FermiSM}
+        \caption{Fermi's streaming multiprocessor schematic representation}
+        \label{fig:SM}
+    \end{figure}
+
+    Each SM is composed of the following computation blocks:
+    \begin{itemize}
+        \item 32 CUDA cores in two groups of 16,
+        \item 16 load/store units (LD/ST on the figure)
+        \item 4 Special Functions Units (SFUs) dedicated to more complex
+              arithmetic functions such as sines and logarithms.
+    \end{itemize}
+    
+    As the SFUs are dedicated to floating-point operations they're already an
+    area that can be reused for integer computation components, thus it's not
+    part of the following research. The focus of the experiments are the 
+    CUDA cores.
+
+    \subsection{CUDA Cores}
+    Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
+    according to Nvidia.
+    
+    \begin{figure}[H]
+    \centering
+        \includegraphics{pictures/CUDACore}
+        \caption{Schematic representation of Nvidia's CUDA Core}
+        \label{fig:CUDACore}
+    \end{figure}
+    
+    From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be 
+    extended to twice 16 integers ALUs and 16 simple-precision floating-point
+    ALUs. The interesting parts are the "FP Unit" and "INT Unit" as the rest
+    can be left as-is.
+
+\section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
 
 	\subsection{Benchmark running times against number of threads}
 	\label{sectiondassaut}
 	\subsubsection{Description of the experiment}
-	The following experiment has tried to outline the created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+	The following experiment is trying to outline the relation between the running
+    times of the benchmark program and the number of threads running parallely in
+    a single block (i.e.: the threads reside on one SM).
 	\subsubsection{Expectations}
-	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
+    The running times are expected to be slightly higher for the integer
+    multiplications but to deteriorate in a similar fashion (begin to deteriorate
+    at the same point, at the same rate) due to each core being equipped with
+    integer and single-precision floating-point ALUs.
 	\subsubsection{Results and analysis}
     \begin{figure}[h]
     	\centering
 		\vspace{-20pt}
+        % TODO: replace with graphic containing both INT and FP results
 	    \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times"}
 		\vspace{-15pt}
-        \caption{Running times of benchmark against number of threads}
+        \caption{Running times of benchmark (in cycles) against number of threads}
     \end{figure}
 	\pagebreak
+    
+    \subsubsection{Results}
+    The results are against the expectations as it's easy to see the integer
+    multiplication times starting to grow at 257 threads in the block against
+    513 for the simple-precision floating-point multiplications.
 
-	\subsection{Benchmark running times divided by number of multplications}
-	\subsubsection{Description of the experiment}
-	The experiment from \ref{sectiondassaut} has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
-	\subsubsection{Expectations}
-	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
-	\subsubsection{Results and analysis}
-	In Figure~\ref{fig:latencyestimate}, the average clock cycles per multiplication for the single-precision floating-point has indeed shown to deteriorate slower than for the integer multiplication. The running time is constant for twice as many threads and then the increase happens every 64 additional threads instead of every 32 threads.
-	\begin{figure}[h]
-		\centering
-		\vspace{-20pt}
-    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/latency_estimate"}
-		\vspace{-15pt}
-		\caption{Running times of benchmark divided by number of operations against number of threads}
-		\label{fig:latencyestimate}
-	\end{figure}
-	\pagebreak
+    To understand these deteriorations the next experiment has been made.
 
 \section{Mixing single-precision floating-points and integer multiplication}
 	\subsection{Description of the experiment}
@@ -86,8 +130,34 @@
     \end{figure}
 	\pagebreak
 
-\section{Interpretation}
+	\subsection{Benchmark running times divided by number of multiplications}
+	\subsubsection{Description of the experiment}
+	The experiment from \ref{sectiondassaut} has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+	\subsubsection{Expectations}
+	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
+	\subsubsection{Results and analysis}
+	In Figure~\ref{fig:latencyestimate}, the average clock cycles per multiplication for the single-precision floating-point has indeed shown to deteriorate slower than for the integer multiplication. The running time is constant for twice as many threads and then the increase happens every 64 additional threads instead of every 32 threads.
+	\begin{figure}[h]
+		\centering
+		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/latency_estimate"}
+		\vspace{-15pt}
+		\caption{Running times of benchmark divided by number of operations against number of threads}
+		\label{fig:latencyestimate}
+	\end{figure}
+	\pagebreak
 
+\section{Results}
+    \subsection{Pipeline structure} 
+    As seen during the experiments, the CUDA core's pipeline appears to be a rigid, 18 steps pipeline. The fact that integer multiplication and simple-precision floating-point multiplication both take the same amount of time (on a machine that's supposed to be a floating-point calculation optimized device) until the pipelines are filled suggests a simple, no-dependency-check, scheduler that fires up new instructions every 18 cycles.
+
+It also appears rather clearly that, while 32 cores per SM are advertised by Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer operations to be scheduled every 18 cycles.
+    \subsection{Prospects}
+    From the previous constatations the following can be derived:
+    \begin{itemize}
+        \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
+        \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
+    \end{itemize}
 \section{Additionnal graphics and tables}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[h]
