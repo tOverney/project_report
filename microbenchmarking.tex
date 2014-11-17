@@ -2,6 +2,12 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{svg}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
 \def \scalingfactor{.8}
 
 \begin{document}
@@ -49,10 +55,9 @@
               arithmetic functions such as sines and logarithms.
     \end{itemize}
     
-    As the SFUs are dedicated to floating-point operations they're already an
-    area that can be reused for integer computation components, thus it's not
-    part of the following research. The focus of the experiments are the 
-    CUDA cores.
+    As the SFU is dedicated to floating-point operations it's already an area
+    that can be reused for integer computation components, thus it's not part
+    of the following research. The focus of the experiments are the CUDA cores.
 
     \subsection{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
@@ -65,21 +70,35 @@
         \label{fig:CUDACore}
     \end{figure}
     
-    From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be 
-    extended to twice 16 integers ALUs and 16 simple-precision floating-point
-    ALUs. The interesting parts are the "FP Unit" and "INT Unit" as the rest
-    can be left as-is.
+    From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be
+    adjusted to twice 16 integers ALUs and 16 simple-precision floating-point
+    ALUs.
+
+    \subsection{Basics of Fermi's scheduling}
+        \subsubsection{Grids and blocks} 
+        A cuda kernel (that is: a section of code that will run on the GPU) is
+        launched with two parameters: a grid size and a block size. The grid 
+        size is used to determine the number of SM on which the code will run.
+        The block size determines how many threads will run the code inside each
+        SM. As we're interested in the properties of single SMs or even, single
+        cores, every benchmarking experiment was done using a grid size of one.
+
+        \subsubsection{Warps}
+        The second important scheduling unit is the warp. A warp consists
+        of 32 threads. Each scheduling cycle, the scheduler selects two
+        warps, for each of these it schedules 16 threads (making it 32
+        threads coming from two warps).
 
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
 
 	\subsection{Benchmark running times against number of threads}
-	\label{sectiondassaut}
+	\label{par:pipeline_exp}
 	\subsubsection{Description of the experiment}
 	The following experiment is trying to outline the relation between the running
     times of the benchmark program and the number of threads running parallely in
-    a single block (i.e.: the threads reside on one SM).
+    a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
     The running times are expected to be slightly higher for the integer
     multiplications but to deteriorate in a similar fashion (begin to deteriorate
@@ -101,16 +120,24 @@
     multiplication times starting to grow at 257 threads in the block against
     513 for the simple-precision floating-point multiplications.
 
-    To understand these deteriorations the next experiment has been made.
+    To understand these deteriorations points the next experiment has been designed.
 
 \section{Mixing single-precision floating-points and integer multiplication}
-	\subsection{Description of the experiment}
-	Informations have been found which were implying that the throughput for integer multiplication was half the single-precision floating-point multiplication throughput because only one of the two 16 cores group of an SM was provisionned with integer multiplier.
-	The following result are an attempt to verify those informations.
+	\subsection{The experiment}
+	Information has been found which was implying that the number of integer multiplication
+    able to run parallely on an SM was only half the number single-precision floating-point
+    multiplication. Leading to the conclusion that only one of the two 16 cores group of an
+    SM was equipped with integer. The following experiments issue integer multiplication in
+    parallel of floating-point operations to confirm this hypothesis.
 	\subsection{Benchmark running times, 1 single-precision floating-points for 1 integer multiplication}
-	If indeed only 1 out of 2 cores group can run integer multiplication then adding the same amount of multiplication but in single-precision floating-point should not increase the total time spent executing our multiplications as the single-precision floating-point multiplication can be run on the other core group (the one that does not possess integer multiplication).
+	If indeed only 1 out of 2 cores group can run integer multiplication then
+    adding the same amount of floating-point multiplications as there were integer
+    multiplications should not increase the total time spent executing the benchmark 
+    program as the single-precision floating-point multiplication can
+    be ran on the other core group (the one that does not possess integer multiplication).
 	
-	One million multiplication of each kind has been ran on 1 to 1024 threads to see if the results were comparable to the graph were there was only integer multiplication.
+	One million multiplication of each kind has been ran on 1 to 1024 threads to
+    see if the results were comparable to the graph were there was only integer multiplication.
 	\begin{figure}[h]
 		\centering
 		\vspace{-20pt}
@@ -128,32 +155,78 @@
 		\vspace{-15pt}
         \caption{Running times of benchmarks with a mix of single-precision floating-points and integers multiplications}
     \end{figure}
-	\pagebreak
 
-	\subsection{Benchmark running times divided by number of multiplications}
-	\subsubsection{Description of the experiment}
-	The experiment from \ref{sectiondassaut} has been ran with single-precision floating-point multiplications. A graph has then been created to display the relation between the average running times per multiplication in clock cycle and number of threads running parallely.
+    \subsection{Results}
+    The running times appear to be bound by those of the integer multiplication but is no higher than
+    when only integer multiplications are ran, this confirms the hypothesis that only 16 of the 32
+    CUDA core are equipped with integer ALUs.
+
+\section{Understanding pipeline length and performance deterioration}
+    \subsection{The experiment}
+    With the results of \ref{par:pipeline_exp} in mind, it's clear that the core's pipelines
+    are of fixed size. The objective of the following experiment is to determine the cost of
+    the loop used in the benchmarks to adjust the running times found and match them with
+    the hypothesis about pipeline length and scheduling. 
 	\subsubsection{Expectations}
-	The average time (in clock cycle) for a single-precision floating-point multiplication had been assumed to deteriorate slower than the integer as the fermi throughput specification says single-precision floating-point mult is 512 every clock cycle but integer is only 256.
+	As seen in \ref{par:pipeline_exp} the cost simple-precision floating-point
+    operations goes up at 512 threads. This would imply that every pipeline of
+    the SM is perfectly filled with 512 threads. Dividing 512 threads by within
+    the 32 cores gives a pipeline length of 16. In addition, the cost increase
+    is suspected to be 1/8 of the base cost as the scheduling is expected to be
+    something like described in the following schematic:
+    % TODO INCLUDE SCHEDULING SCHEMATIC
+
+    The 1/8 can be derived from the following formula:
+    \[ \cfrac{t_{513threads} - t_{512threads}}{t_{512threads}} \]
+    The latency of an instruction is equal to the pipeline length, plus 1/16 of
+    it for every additional warp after the $16^{th}$. So the latency l of an 
+    operation is $L + max(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
+    running time of a benchmark, this latency must be added as a constant to
+    represent the time the last instruction takes to get through the pipeline.
+
+    The expansion of the previous formula gives:
+    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \]
+    Which, with numerical values and simplifcations is:
+    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\] 
+
+    Thus, the outcome expected is that once the loop cost is removed from the 
+    times obtained in \ref{par_pipeline_exp} the remaining time is 16 millions
+    which is 16 cycles per operation, fitting the 16-stages pipeline hypothesis.
+    The expected difference in running time after adjustments is 2 millions cycles,
+    1/8 of 16 millions.
+
 	\subsubsection{Results and analysis}
-	In Figure~\ref{fig:latencyestimate}, the average clock cycles per multiplication for the single-precision floating-point has indeed shown to deteriorate slower than for the integer multiplication. The running time is constant for twice as many threads and then the increase happens every 64 additional threads instead of every 32 threads.
-	\begin{figure}[h]
-		\centering
-		\vspace{-20pt}
-    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/latency_estimate"}
-		\vspace{-15pt}
-		\caption{Running times of benchmark divided by number of operations against number of threads}
-		\label{fig:latencyestimate}
-	\end{figure}
-	\pagebreak
+    Running a benchmark containing 10 loops of 100000 operations and a benchmark
+    of 1000 loops containing 1000 operations yields a difference in running time of
+    around 10000 cycles ($\pm$ 800). This leads to a cost of $\sim$ 10 cycles per
+    loop iteration. ($t_{1000loops} - t_{10loops} = 10000 \implies t_{990loops} = 10000
+    \implies t_{1loop} = 10$)
+    
+	This means that each warp will run 10 cycles for each loop iteration. Thus the 
+    adjusted running times can be computed as follow:
+    \[ t_{adj} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{iter} \]
+    with t, the unadjusted time, $\ceil{\cfrac{N}{32}}$ the number of warps and 
+    $n_{iter}$ the number of loop iterations
+
+    Applying the adjustments to the empirical values %TODO 
 
 \section{Results}
-    \subsection{Pipeline structure} 
-    As seen during the experiments, the CUDA core's pipeline appears to be a rigid, 18 steps pipeline. The fact that integer multiplication and simple-precision floating-point multiplication both take the same amount of time (on a machine that's supposed to be a floating-point calculation optimized device) until the pipelines are filled suggests a simple, no-dependency-check, scheduler that fires up new instructions every 18 cycles.
+    \subsection{Pipeline structure}
+    As seen during the experiments, the CUDA core's pipeline appears to be a
+    rigid, 16 steps pipeline. The fact that integer multiplication and 
+    simple-precision floating-point multiplication both take the same amount
+    of time (on a machine that's supposed to be a floating-point calculation
+    optimized device) until the pipelines are filled suggests a simple,
+    no-dependency-check, scheduler that fires up new instructions every 16 cycles.
 
-It also appears rather clearly that, while 32 cores per SM are advertised by Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer operations to be scheduled every 18 cycles.
+    It also appears rather clearly that, while 32 cores per SM are advertised by
+    Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer
+    operations to be scheduled every 18 cycles.
+    
     \subsection{Prospects}
-    From the previous constatations the following can be derived:
+    From the previous constatations the following ideas are expected to drastically
+    improve the integer computation performances while maintaining a stable (if not
+    lower) cost in transistors:
     \begin{itemize}
         \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
