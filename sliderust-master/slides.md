@@ -35,3 +35,4 @@ There was too much things we didn’t know about Fermi.
 * Fermi is closed-source and there is little to no precise infos about it on the web
 * We had a Fermi card ready for some live measurment
 
+# Benchmarking methodology
