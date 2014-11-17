@@ -29,8 +29,6 @@ Find a way to increase GPU performance for cryptographic application.
 
 There was too much things we didn’t know about Fermi.
 
-AUTOMATIC UPDATE SHOULD WORK
-
 # Microbenchmarking
 
 * We had to have a better understanding of the Fermi architecture
