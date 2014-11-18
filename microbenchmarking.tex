@@ -193,7 +193,7 @@
     is suspected to be 1/8 of the base cost as the scheduling is expected to be
     something like described in the following schematic:
     
-    \begin{figure}[h]
+    \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
     	    \hline
@@ -233,7 +233,7 @@
     1/8 of 16 millions.
 
 	\subsubsection{Results and analysis}
-    \begin{figure}[h]
+    \begin{figure}[H]
 		\centering
 		\vspace{-20pt}
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/for-sizes-superpositions"}
@@ -263,7 +263,7 @@
 	
 	One million multiplication of each kind has been ran on 1 to 1024 threads to
     see if the results were comparable to the graph were there was only integer multiplication.
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\vspace{-20pt}
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
@@ -274,7 +274,7 @@
 	\pagebreak
 
 	\subsection{Benchmark running times with mixed single-precision floating-point and integer multiplications}
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\vspace{-20pt}
         \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_mixed"}
@@ -309,7 +309,7 @@
         \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
     \end{itemize}
-\section{Additionnal graphics and tables}
+\section{Additionnal graphics and tables}[H]
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[h]
     		\centering
