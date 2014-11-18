@@ -43,7 +43,7 @@
     with 16 of these SMs.
     \begin{figure}[H]
     \centering
-        \includesvg[width=\scalingfactor\linewidth]{FermiSM}
+        %TODO uncomment \includesvg[width=\scalingfactor\linewidth]{FermiSM}
         \caption{Fermi's streaming multiprocessor schematic representation}
         \label{fig:SM}
     \end{figure}
@@ -115,21 +115,19 @@
 		\vspace{-15pt}
         \caption{Running times of benchmark (in cycles) against number of threads}
     \end{figure}
-	\pagebreak
-    
-    \subsubsection{Results}
+	
     The results are against the expectations as it's easy to see the integer
     multiplication times starting to grow at 257 threads in the block against
     513 for the simple-precision floating-point multiplications.
     
     %not at the right place, there should be a section about FP benchmark.
     Seeing as the running time is constant up to 512 threads running and that we have 32 cores avaliable it has been assumed that the pipeline depth for the FP multiplication is 16 ($512/32 = 16$). Which seems to correlate with the latency of the FP multiplication.
-    \ref{fig:fp_prediction_tabel} represent the analysis that has been drawn when 512 threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the first core group and 17 to 32 is the second one.) $t_{j,k}$ is the thread nb $k$ of the warp $j$. 
+    Figure~\ref{fig:fp_prediction_512} represent the analysis that has been drawn when 512 threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the first core group and 17 to 32 is the second one.) $t_{j,k}$ is the thread number $k$ of the warp $j$. 
         \begin{figure}[h]
       \centering
        \begin{tabular}{ | r || c | c | c | c | c | c | c | }
     	    \hline
-    	    time since begining & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
     	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline 
     	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & $t_{2, 17}$ & ... & $t_{2, 32}$ \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
@@ -137,12 +135,79 @@
     	   17 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{$C_1$ to $C_{32}$ are the core of a single SM \newline$t_{j,k}$ is the thread nb $k$ of the warp $j$.}
-  	\label{fig:fp_prediction_tabel}
+  	\caption{Planned running scheme for 512 threads with floating point number multiplication}
+  	\label{fig:fp_prediction_512}
+   \end{figure}
+   
+   Figure~\ref{fig:int_prediction_256} represent the analysis that has been drawn when 256 threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first group core is provided in integer multiplication but the second. $t_{j,k}$ is the thread number $k$ of the warp $j$.
+   \begin{figure}[h]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c | c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & - & ... & - \\ \hline 
+    	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & - & ... & - \\ \hline
+    	   3 & $t_{2,1}$ & $t_{2,2}$ & ... & $t_{2,16}$ & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   16 & $t_{8,17}$ & $t_{8,18}$ & ... & $t_{8,32}$ & - & ... & - \\ \hline
+    	   17 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & - & ... & - \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 256 threads with integer number multiplication}
+  	\label{fig:int_prediction_256}
    \end{figure}
 
 	% better phrasing needed :)
     To understand these deteriorations points the next experiment has been designed.
+
+\section{Understanding pipeline length and performance deterioration}
+    \subsection{The experiment}
+    With the results of \ref{par:pipeline_exp} in mind, it's clear that the core's pipelines
+    are of fixed size. The objective of the following experiment is to determine the cost of
+    the loop used in the benchmarks to adjust the running times found and match them with
+    the hypothesis about pipeline length and scheduling. 
+	\subsubsection{Expectations}
+	As seen in \ref{par:pipeline_exp} the cost simple-precision floating-point
+    operations goes up at 512 threads. This would imply that every pipeline of
+    the SM is perfectly filled with 512 threads. Dividing 512 threads by within
+    the 32 cores gives a pipeline length of 16. In addition, the cost increase
+    is suspected to be 1/8 of the base cost as the scheduling is expected to be
+    something like described in the following schematic:
+    % TODO INCLUDE SCHEDULING SCHEMATIC
+
+    The 1/8 can be derived from the following formula:
+    \[ \cfrac{t_{513threads} - t_{512threads}}{t_{512threads}} \]
+    The latency of an instruction is equal to the pipeline length, plus 1/16 of
+    it for every additional warp after the $16^{th}$. So the latency l of an 
+    operation is $L + max(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
+    running time of a benchmark, this latency must be added as a constant to
+    represent the time the last instruction takes to get through the pipeline.
+
+    The expansion of the previous formula gives:
+    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \]
+    Which, with numerical values and simplifications is:
+    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\] 
+
+    Thus, the outcome expected is that once the loop cost is removed from the 
+    times obtained in \ref{par:pipeline_exp} the remaining time is 16 millions
+    which is 16 cycles per operation, fitting the 16-stages pipeline hypothesis.
+    The expected difference in running time after adjustments is 2 millions cycles,
+    1/8 of 16 millions.
+
+	\subsubsection{Results and analysis}
+    Running a benchmark containing 10 loops of 100000 operations and a benchmark
+    of 1000 loops containing 1000 operations yields a difference in running time of
+    around 10000 cycles ($\pm$ 800). This leads to a cost of $\sim$ 10 cycles per
+    loop iteration. ($t_{1000loops} - t_{10loops} = 10000 \implies t_{990loops} = 10000
+    \implies t_{1loop} = 10$)
+    
+	This means that each warp will run 10 cycles for each loop iteration. Thus the 
+    adjusted running times can be computed as follow:
+    \[ t_{adj} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{iter} \]
+    with t, the unadjusted time, $\ceil{\cfrac{N}{32}}$ the number of warps and 
+    $n_{iter}$ the number of loop iterations
+
+    Applying the adjustments to the empirical values %TODO
 
 \section{Mixing single-precision floating-points and integer multiplication}
 	\subsection{The experiment}
@@ -181,56 +246,7 @@
     \subsection{Results}
     The running times appear to be bound by those of the integer multiplication but is no higher than
     when only integer multiplications are ran, this confirms the hypothesis that only 16 of the 32
-    CUDA core are equipped with integer ALUs.
-
-\section{Understanding pipeline length and performance deterioration}
-    \subsection{The experiment}
-    With the results of \ref{par:pipeline_exp} in mind, it's clear that the core's pipelines
-    are of fixed size. The objective of the following experiment is to determine the cost of
-    the loop used in the benchmarks to adjust the running times found and match them with
-    the hypothesis about pipeline length and scheduling. 
-	\subsubsection{Expectations}
-	As seen in \ref{par:pipeline_exp} the cost simple-precision floating-point
-    operations goes up at 512 threads. This would imply that every pipeline of
-    the SM is perfectly filled with 512 threads. Dividing 512 threads by within
-    the 32 cores gives a pipeline length of 16. In addition, the cost increase
-    is suspected to be 1/8 of the base cost as the scheduling is expected to be
-    something like described in the following schematic:
-    % TODO INCLUDE SCHEDULING SCHEMATIC
-
-    The 1/8 can be derived from the following formula:
-    \[ \cfrac{t_{513threads} - t_{512threads}}{t_{512threads}} \]
-    The latency of an instruction is equal to the pipeline length, plus 1/16 of
-    it for every additional warp after the $16^{th}$. So the latency l of an 
-    operation is $L + max(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
-    running time of a benchmark, this latency must be added as a constant to
-    represent the time the last instruction takes to get through the pipeline.
-
-    The expansion of the previous formula gives:
-    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \]
-    Which, with numerical values and simplifcations is:
-    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\] 
-
-    Thus, the outcome expected is that once the loop cost is removed from the 
-    times obtained in \ref{par_pipeline_exp} the remaining time is 16 millions
-    which is 16 cycles per operation, fitting the 16-stages pipeline hypothesis.
-    The expected difference in running time after adjustments is 2 millions cycles,
-    1/8 of 16 millions.
-
-	\subsubsection{Results and analysis}
-    Running a benchmark containing 10 loops of 100000 operations and a benchmark
-    of 1000 loops containing 1000 operations yields a difference in running time of
-    around 10000 cycles ($\pm$ 800). This leads to a cost of $\sim$ 10 cycles per
-    loop iteration. ($t_{1000loops} - t_{10loops} = 10000 \implies t_{990loops} = 10000
-    \implies t_{1loop} = 10$)
-    
-	This means that each warp will run 10 cycles for each loop iteration. Thus the 
-    adjusted running times can be computed as follow:
-    \[ t_{adj} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{iter} \]
-    with t, the unadjusted time, $\ceil{\cfrac{N}{32}}$ the number of warps and 
-    $n_{iter}$ the number of loop iterations
-
-    Applying the adjustments to the empirical values %TODO 
+    CUDA core are equipped with integer ALUs. 
 
 \section{Results}
     \subsection{Pipeline structure}
