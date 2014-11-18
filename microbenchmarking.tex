@@ -19,14 +19,14 @@
 \maketitle
 
 \section{Goals}
-	The goals of this benchmarking is to expose the Fermi microarchitecture details
+	The goals of this research is to expose the Fermi microarchitecture details
     as implemented in Nvidia Fermi cards (pipeline length, instructions latency,
     scheduling patterns, etc.) in order to know what can and cannot be changed
     to create an integer computation oriented device.
 
 \section{Methods}
 	To achieve the aforementioned goals, a serie of specially crafted CUDA kernels
-	were used. These usually contain large batches of dependent instructions that were 
+	were used. These usually contain large batches of instructions that were 
 	timed with the assistance of the \texttt{clock64()} function offered by the CUDA API.
 
 	The benchmark programs have been ran on a machine equipped with an Nvidia
@@ -75,7 +75,7 @@
     \end{figure}
     
     From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be
-    adjusted to twice 16 integers ALUs and 16 simple-precision floating-point
+    adjusted to 2x16 integers ALUs and 2x16 simple-precision floating-point
     ALUs.
 
     \subsection{Basics of Fermi's scheduling}
@@ -91,7 +91,7 @@
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
-        threads coming from two warps).
+        threads scheduled, coming from two warps).
 
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
@@ -100,12 +100,13 @@
 	\subsection{Benchmark running times against number of threads}
 	\label{par:pipeline_exp}
 	\subsubsection{Description of the experiment}
-	The following experiment is trying to outline the relation between the running
+	The first experiment aims at outlining the relation between the running
     times of the benchmark program and the number of threads running parallely in
     a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
     The running times are expected to be slightly higher for the integer
-    multiplications but to deteriorate in a similar fashion (begin to deteriorate
+    multiplications, as GPUs are optimized for floting point computation
+    but to deteriorate in a similar fashion (begin to deteriorate
     at the same point, at the same rate) due to each core being equipped with
     integer and single-precision floating-point ALUs.
     
@@ -124,8 +125,14 @@
     513 for the simple-precision floating-point multiplications.
     
     %not at the right place, there should be a section about FP benchmark.
-    Seeing as the running time is constant up to 512 threads running and that we have 32 cores avaliable it has been assumed that the pipeline depth for the FP multiplication is 16 ($512/32 = 16$). Which seems to correlate with the latency of the FP multiplication.
-    Figure~\ref{fig:fp_prediction_512} represent the analysis that has been drawn when 512 threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the first core group and 17 to 32 is the second one.) $t_{j,k}$ is the thread number $k$ of the warp $j$. 
+    As the running time is constant up to 512 threads running in parallel and that we have 32 cores
+    available, the hypothesis has been formulated that the pipeline depth for the single-precision 
+    floating-point multiplication is 16 ($512/32 = 16$). Which seems to correlate with the running
+    times of the single-precision floating-points multiplication. Figure~\ref{fig:fp_prediction_512}
+    represents the hypothesis made about the pipeline depth when 512 threads are running, $C_1$ to
+    $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the
+    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the thread number $k$ of the
+    warp $j$. 
         \begin{figure}[h]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
@@ -144,7 +151,11 @@
   	\label{fig:fp_prediction_512}
    \end{figure}
    
-   Figure~\ref{fig:int_prediction_256} represent the analysis that has been drawn when 256 threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first group core is provided in integer multiplication but the second. $t_{j,k}$ is the thread number $k$ of the warp $j$.
+    Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 256
+    threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
+    has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first
+    group core is provided in integer multiplication but the second. $t_{j,k}$ is the thread number
+    $k$ of the warp $j$.
    \begin{figure}[h]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
@@ -164,18 +175,18 @@
    \end{figure}
 
 	% better phrasing needed :)
-    To understand these deteriorations points the next experiment has been designed.
+    To understand these deterioration points the next experiment has been designed.
 
 \section{Understanding pipeline length and performance deterioration}
     \subsection{The experiment}
-    With the results of \ref{par:pipeline_exp} in mind, it's clear that the core's pipelines
-    are of fixed size. The objective of the following experiment is to determine the cost of
-    the loop used in the benchmarks to adjust the running times found and match them with
+    With the results of \ref{par:pipeline_exp} in mind, it's clear that the pipelines depth 
+    must be 16. The objective of the following experiment is to determine the cost of
+    the loop used in the benchmarks to adjust the running times found and see if they match with
     the hypothesis about pipeline length and scheduling. 
 	\subsubsection{Expectations}
-	As seen in \ref{par:pipeline_exp} the cost simple-precision floating-point
+	As seen in \ref{par:pipeline_exp} the cost of simple-precision floating-point
     operations goes up at 512 threads. This would imply that every pipeline of
-    the SM is perfectly filled with 512 threads. Dividing 512 threads by within
+    the SM is perfectly filled with 512 threads. Dividing 512 threads by
     the 32 cores gives a pipeline length of 16. In addition, the cost increase
     is suspected to be 1/8 of the base cost as the scheduling is expected to be
     something like described in the following schematic:
@@ -235,11 +246,11 @@
 
 \section{Mixing single-precision floating-points and integer multiplication}
 	\subsection{The experiment}
-	Information has been found which was implying that the number of integer multiplication
-    able to run parallely on an SM was only half the number single-precision floating-point
-    multiplication. Leading to the conclusion that only one of the two 16 cores group of an
-    SM was equipped with integer. The following experiments issue integer multiplication in
-    parallel of floating-point operations to confirm this hypothesis.
+	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
+    integer multiplication able to run parallely on an SM was only half the number of 
+    single-precision floating-point multiplication. Leading to the conclusion that only one of
+    the two 16 cores group of an SM was equipped with integer. The following experiments issue 
+    integer multiplication in parallel of floating-point operations to confirm this hypothesis.
 	\subsection{Benchmark running times, 1 single-precision floating-points for 1 integer multiplication}
 	If indeed only 1 out of 2 cores group can run integer multiplication then
     adding the same amount of floating-point multiplications as there were integer
@@ -277,7 +288,7 @@
 \section{Results}
     \subsection{Pipeline structure}
     As seen during the experiments, the CUDA core's pipeline appears to be a
-    rigid, 16 steps pipeline. The fact that integer multiplication and 
+    16 steps pipeline. The fact that integer multiplication and 
     simple-precision floating-point multiplication both take the same amount
     of time (on a machine that's supposed to be a floating-point calculation
     optimized device) until the pipelines are filled suggests a simple,
