@@ -196,18 +196,18 @@
   	\label{fig:fp_prediction_513}
    \end{figure}
 
-    The 1/8 can be derived from the following formula:
-    \[ \cfrac{t_{513threads} - t_{512threads}}{t_{512threads}} \]
+    The 1/8 can be derived from the following formula
+    \[ \cfrac{t_{\text{513threads}} - t_{\text{512threads}}}{t_{\text{512threads}}} \text{  .}\]
     The latency of an instruction is equal to the pipeline length, plus 1/16 of
-    it for every additional warp after the $16^{th}$. So the latency l of an 
-    operation is $L + max(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
+    it for every additional warp after the $16^{\text{th}}$. So the latency l of an 
+    operation is $L + \text{max}(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
     running time of a benchmark, this latency must be added as a constant to
     represent the time the last instruction takes to get through the pipeline.
 
-    The expansion of the previous formula gives:
-    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \]
-    Which, with numerical values and simplifications is:
-    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\] 
+    The expansion of the previous formula gives
+    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \text{  .}\]
+    Which, with numerical values and simplifications is
+    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\text{  .}\] 
 
     Thus, the outcome expected is that once the loop cost is removed from the 
     times obtained in \ref{par:pipeline_exp} the remaining time is 16 millions
@@ -219,14 +219,13 @@
     Running a benchmark containing 10 loops of 100000 operations and a benchmark
     of 1000 loops containing 1000 operations yields a difference in running time of
     around 10000 cycles ($\pm$ 800). This leads to a cost of $\sim$ 10 cycles per
-    loop iteration. ($t_{1000loops} - t_{10loops} = 10000 \implies t_{990loops} = 10000
-    \implies t_{1loop} = 10$)
+    loop iteration ($t_{\text{1000loops}} - t_{\text{10loops}} = 10000 \implies t_{\text{990loops}} = 10000 \implies t_{\text{1loop}} = 10$).
     
 	This means that each warp will run 10 cycles for each loop iteration. Thus the 
-    adjusted running times can be computed as follow:
-    \[ t_{adj} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{iter} \]
+    adjusted running times can be computed as follow
+    \[ t_{\text{adj}} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{\text{iter}} \]
     with t, the unadjusted time, $\ceil{\cfrac{N}{32}}$ the number of warps and 
-    $n_{iter}$ the number of loop iterations
+    $n_{\text{iter}}$ the number of loop iterations
 
     Applying the adjustments to the empirical values %TODO
 
