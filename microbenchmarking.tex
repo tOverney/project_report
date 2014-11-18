@@ -233,18 +233,19 @@
     1/8 of 16 millions.
 
 	\subsubsection{Results and analysis}
-    Running a benchmark containing 10 loops of 100000 operations and a benchmark
-    of 1000 loops containing 1000 operations yields a difference in running time of
-    around 10000 cycles ($\pm$ 800). This leads to a cost of $\sim$ 10 cycles per
-    loop iteration ($t_{\text{1000loops}} - t_{\text{10loops}} = 10000 \implies t_{\text{990loops}} = 10000 \implies t_{\text{1loop}} = 10$).
+    \begin{figure}[h]
+		\centering
+		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/for-sizes-superpositions"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+		\caption{Running a million operations broken down in 10 and 1000 loop iterations.}
+        \label{fig:for-cost}
+	\end{figure}
     
-	This means that each warp will run 10 cycles for each loop iteration. Thus the 
-    adjusted running times can be computed as follow
-    \[ t_{\text{adj}} = t - \ceil{\cfrac{N}{32}}\cdot 10 \cdot n_{\text{iter}} \]
-    with t, the unadjusted time, $\ceil{\cfrac{N}{32}}$ the number of warps and 
-    $n_{\text{iter}}$ the number of loop iterations
-
-    Applying the adjustments to the empirical values %TODO
+    Figure ~\ref{fig:for-cost} suggests that only a insignificant amount of time is spent by the loop
+    iterations' instructions. The next possible explanation would be data transfer overhead caused
+    by compiler shenanigans.
 
 \section{Mixing single-precision floating-points and integer multiplication}
 	\subsection{The experiment}
