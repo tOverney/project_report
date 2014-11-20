@@ -91,6 +91,20 @@ for(int i = 0; i < n; i++) {
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
+# Benchmark programs
+
+```rust
+for(int i = 0; i < n; i++) {
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+    /* ... */ 
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+}
+```
+
 # Dependence vs. Semi-independence (2)
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
