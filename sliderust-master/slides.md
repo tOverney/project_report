@@ -36,8 +36,13 @@ Find a way to increase GPU performance for cryptographic applications.
 There was just too much things we didn’t know about Fermi.
 
 # Fermi's Streaming Multiprocessor
+<div style="text-align: center; margin-top: 10px">
+<img src="../pictures/Fermi.png" width="40%" height="40%">
+</div>
+
+# CUDA Core
 <div style="text-align: center; margin-top: 80px">
-<img src="../pictures/Fermi.png" width="50%" height="50%">
+<img src="../pictures/CUDACore.png" width="40%" height="40%">
 </div>
 
 # Microbenchmarking
