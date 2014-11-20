@@ -93,7 +93,7 @@ for(int i = 0; i < n; i++) {
 
 # Integer vs. Single-precision floating-points (2)
 <div style="text-align: center; margin-top: 120px">
-<img src="../graphics/float_vs_int_running_times_nodep.png">
+<img src="../graphics/float_vs_int_running_times_indep.png">
 </div>
 
 # Second scheduling hypothesis
