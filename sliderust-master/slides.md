@@ -30,7 +30,9 @@ Find a way to increase GPU performance for cryptographic applications.
 * First approach was to build hardware components
     * Montgomery multiplier
     * Larger multiplier
+
 * And mimic the Fermi's architecture
+
 * We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes
 
 There was just too much things we didn’t know about Fermi.
@@ -91,9 +93,23 @@ for(int i = 0; i < n; i++) {
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-# Integer vs. Single-precision floating-points (2)
+# Semi-dependencies benchmark program
+
+```rust
+for(int i = 0; i < n; i++) {
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+    /* ... */ 
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_c) : "r"(op_d));
+}
+```
+
+# Dependence vs. Semi-independence (2)
 <div style="text-align: center; margin-top: 60px">
-<img src="../graphics/float_vs_int_running_times_indep.png">
+<img src="../graphics/float_dep_float_indep.png">
 </div>
 
 # Second scheduling hypothesis
@@ -102,6 +118,7 @@ for(int i = 0; i < n; i++) {
 </div>
 
 # What's next
+
 * Determine what can be removed from a Fermi card for our purpose
 * Hardware implementation of specific algorithms in less than 16 cycles
 * Simulation of changes using a modified version of gpgpu-sim
