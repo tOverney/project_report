@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{caption}
+
+\usepackage{mathtools}
+
+\begin{document}
+
+\begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline 
+    	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & $t_{2, 17}$ & ... & $t_{2, 32}$ \\ \hline
+    	   3 & $t_{3,1}$ & $t_{3,2}$ & ... & $t_{3,16}$ & $t_{4, 1}$ & ... & $t_{4, 16}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   16 & $t_{15,17}$ & $t_{15,18}$ & ... & $t_{15,32}$ & $t_{16,17}$ & ... & $t_{16, 32}$ \\ \hline
+    	   17 & $t_{17,1}$ & - & ... & - & - & ... & - \\ \hline
+    	   18 & - & - & ... & - & - & ... & - \\ \hline
+    	   19 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2,1}$ & ... & $t_{2,16}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 513 threads with floating point number multiplication.}
+  	\label{fig:fp_prediction_513}
+   \end{figure}
+   
+\end{document}
