@@ -82,10 +82,11 @@
 
 <h1 id="benchmark-programs" class='section-header'><a
                            href="#benchmark-programs">Benchmark programs</a></h1>
-<pre><code class="language-C">for(int i = 0; i &lt; n; i++) {
+<pre><code class="language-cpp">for(int i = 0; i &lt; n; i++) {
     asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
     asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
-        asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
+    /* ... */ 
+    asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
 }
 </code></pre>
 
