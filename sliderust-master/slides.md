@@ -30,7 +30,9 @@ Find a way to increase GPU performance for cryptographic applications.
 * First approach was to build hardware components
     * Montgomery multiplier
     * Larger multiplier
+
 * And mimic the Fermi's architecture
+
 * We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes
 
 There was just too much things we didn’t know about Fermi.
@@ -116,6 +118,7 @@ for(int i = 0; i < n; i++) {
 </div>
 
 # What's next
+
 * Determine what can be removed from a Fermi card for our purpose
 * Hardware implementation of specific algorithms in less than 16 cycles
 * Simulation of changes using a modified version of gpgpu-sim
