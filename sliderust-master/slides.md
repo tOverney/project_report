@@ -32,7 +32,7 @@ Find a way to increase GPU performance for cryptographic applications.
 * And mimic the Fermi's architecture
 * We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes
 
-There was jsut too much things we didn’t know about Fermi.
+There was just too much things we didn’t know about Fermi.
 
 # Microbenchmarking
 
@@ -46,6 +46,17 @@ There was jsut too much things we didn’t know about Fermi.
 * How could the inferior integer performances be explained if yes ?
 * How is the scheduling performed ? 
 
+# Benchmark programs
+
+```C
+for(int i = 0; i < n; i++) {
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+    // ... 
+    asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
+}
+```
+
 # Integer vs. Single-precision floating-points
 
 * Running a million of operations
@@ -54,8 +65,33 @@ There was jsut too much things we didn’t know about Fermi.
 
 * Expecting slightly lower performances for integer
 
-# Integer vs. Single-prcesision floating-points (2)
-* Insert graph of results here
+# Integer vs. Single-precision floating-points (2)
+<div style="text-align: center; margin-top: 120px">
+<img src="../graphics/float_vs_int_running_times.png">
+</div>
 
-# Pipeline structure and scheduling hypothesis
+# Scheduling, first hypothesis
+
+* Only half of the cores have integer ALUs
+* No dependency check, confirmed by Nvidia's whitepaper on Fermi
+
+# Scheduling, first hypothesis (2)
+<div style="text-align: center; margin-top: 120px">
+<img src="../graphics/scheduling_first.png">
+</div>
+
+# Integer vs. Single-precision floating-points (2)
+<div style="text-align: center; margin-top: 120px">
+<img src="../graphics/float_vs_int_running_times_nodep.png">
+</div>
+
+# Second scheduling hypothesis
+<div style="text-align: center; margin-top: 120px">
+<img src="../graphics/scheduling_second.png">
+</div>
+
+# What's next
+* Determine what can be removed from a Fermi card for our purpose
+* Hardware implementation of specific algorithms in less than 16 cycles
+* Simulation of changes using a modified version of gpgpu-sim
 
