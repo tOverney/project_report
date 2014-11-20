@@ -91,7 +91,7 @@ for(int i = 0; i < n; i++) {
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-# Benchmark programs
+# Semi-dependencies benchmark program
 
 ```rust
 for(int i = 0; i < n; i++) {

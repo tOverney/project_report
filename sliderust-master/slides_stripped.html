@@ -134,8 +134,8 @@
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-<h1 id="benchmark-programs-1" class='section-header'><a
-                           href="#benchmark-programs-1">Benchmark programs</a></h1><pre class='rust '>
+<h1 id="semi-dependencies-benchmark-program" class='section-header'><a
+                           href="#semi-dependencies-benchmark-program">Semi-dependencies benchmark program</a></h1><pre class='rust '>
 <span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
