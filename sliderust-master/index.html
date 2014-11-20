@@ -24,48 +24,82 @@
     <h1 class="title">Design of a Novel Many-Core Crypto Processor</h1>
     <p>Clément Humbert, Tristan Overney</p>
 
-<p>October 17, 2014</p>
+<p>November 21st, 2014</p>
 
 <h1 id="summary" class='section-header'><a
                            href="#summary">Summary</a></h1>
 <ul>
 <li>Goal of the project</li>
 <li>Cryptography on GPU</li>
-<li>First Approach</li>
+<li>First approach</li>
 <li>Microbenchmarking</li>
+<li>The future</li>
 </ul>
 
 <h1 id="goal-of-the-project" class='section-header'><a
                            href="#goal-of-the-project">Goal of the project</a></h1>
-<p>Find a way to increase GPU performance for cryptographic application.</p>
+<p>Find a way to increase GPU performance for cryptographic applications.</p>
 
 <h1 id="cryptography-on-gpu" class='section-header'><a
                            href="#cryptography-on-gpu">Cryptography on GPU</a></h1>
 <ul>
-<li>High level of parallelism, ideal for cryptography.</li>
-<li>GPU’s principal focus are Single-precision floating-point number operations.</li>
+<li>High level of parallelism, ideal for cryptographic algorithms.</li>
+<li>But GPU’s principal focus are single-precision floating-point number operations.</li>
 <li>Nividia’s Fermi is the most recent architecture with decent integer number operation.</li>
+<li>Lack of large multipliers for integers</li>
 </ul>
 
 <h1 id="first-approach" class='section-header'><a
                            href="#first-approach">First approach</a></h1>
 <ul>
-<li>First approach was to build hardware component (such as Montgomery Multiplier).</li>
-<li>We updated and prepared a Simulator (gp-gpu sim) to test custom OP codes.</li>
+<li>First approach was to build hardware components
+
+<ul>
+<li>Montgomery multiplier</li>
+<li>Larger multiplier</li>
+</ul></li>
+<li>And mimic the Fermi&#39;s architecture</li>
+<li>We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes</li>
 </ul>
 
-<p>There was too much things we didn’t know about Fermi.</p>
+<p>There was jsut too much things we didn’t know about Fermi.</p>
 
 <h1 id="microbenchmarking" class='section-header'><a
                            href="#microbenchmarking">Microbenchmarking</a></h1>
 <ul>
-<li>We had to have a better understanding of the Fermi architecture</li>
-<li>Fermi is closed-source and there is little to no precise infos about it on the web</li>
-<li>We had a Fermi card ready for some live measurment</li>
+<li>We need to have a better understanding of the Fermi architecture</li>
+<li>Fermi is closed and there is little to no precise informations about its microarchitecture</li>
+<li>We had a Fermi card ready for some live measurement</li>
 </ul>
 
-<h1 id="benchmarking-methodology" class='section-header'><a
-                           href="#benchmarking-methodology">Benchmarking methodology</a></h1>
+<h1 id="benchmarking-cuda-cores" class='section-header'><a
+                           href="#benchmarking-cuda-cores">Benchmarking cuda cores</a></h1>
+<ul>
+<li>Are floating points and int ALUs really present at a 1:1 ratio ?</li>
+<li>How could the inferior integer performances be explained if yes ?</li>
+<li>How is the scheduling performed ? </li>
+</ul>
+
+<h1 id="integer-vs.-single-precision-floating-points" class='section-header'><a
+                           href="#integer-vs.-single-precision-floating-points">Integer vs. Single-precision floating-points</a></h1>
+<ul>
+<li><p>Running a million of operations</p>
+
+<ul>
+<li>Once for integer multiplication</li>
+<li>Once for sp-fp multiplication</li>
+</ul></li>
+<li><p>Expecting slightly lower performances for integer</p></li>
+</ul>
+
+<h1 id="integer-vs.-single-prcesision-floating-points-(2)" class='section-header'><a
+                           href="#integer-vs.-single-prcesision-floating-points-(2)">Integer vs. Single-prcesision floating-points (2)</a></h1>
+<ul>
+<li>Insert graph of results here</li>
+</ul>
+
+<h1 id="pipeline-structure-and-scheduling-hypothesis" class='section-header'><a
+                           href="#pipeline-structure-and-scheduling-hypothesis">Pipeline structure and scheduling hypothesis</a></h1>
     <script type="text/javascript">
         window.playgroundUrl = "";
     </script>
