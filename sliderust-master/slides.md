@@ -9,6 +9,7 @@ November 21st, 2014
 * Goal of the project
 * Cryptography on GPU
 * First approach
+* Fermi
 * Microbenchmarking
 * The future
 
@@ -33,6 +34,11 @@ Find a way to increase GPU performance for cryptographic applications.
 * We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes
 
 There was just too much things we didn’t know about Fermi.
+
+# Fermi's Streaming Multiprocessor
+<div style="text-align: center; margin-top: 80px">
+<img src="../pictures/Fermi.png" width="50%" height="50%">
+</div>
 
 # Microbenchmarking
 
