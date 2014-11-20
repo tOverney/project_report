@@ -83,7 +83,7 @@ for(int i = 0; i < n; i++) {
 
 # Scheduling, first hypothesis (2)
 <div style="text-align: center; margin-top: 120px">
-<img src="../graphics/scheduling_first.png">
+<img src="../pictures/table_513t_float_100dep.png">
 </div>
 
 # Integer vs. Single-precision floating-points (2)
