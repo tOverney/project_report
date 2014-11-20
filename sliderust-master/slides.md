@@ -37,7 +37,7 @@ There was just too much things we didn’t know about Fermi.
 
 # Fermi's Streaming Multiprocessor
 <div style="text-align: center; margin-top: 80px">
-<img width="50%" src="../pictures/Fermi.png">
+<img src="../pictures/Fermi.png" width="50%" height="50%">
 </div>
 
 # Microbenchmarking
