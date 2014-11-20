@@ -48,7 +48,7 @@ There was just too much things we didn’t know about Fermi.
 
 # Benchmark programs
 
-``` cpp
+```rust
 for(int i = 0; i < n; i++) {
     asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
     asm volatile("mul.lo.u32 %0, %0, %1;" : "+r"(op_a) : "r"(op_b));
