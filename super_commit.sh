@@ -16,6 +16,7 @@ mogrify -format png *.pdf
 rm *.pdf
 cd ..
 
+git add .
 git commit -m "Automatic update of the slideshow"
 git push -f origin gh-pages
 git checkout master
