@@ -1,17 +1,17 @@
 body {
-    max-width: 1125px;
+    max-width: 1400px;
 }
 
 h1 {
-    font-size: 70px;
+    font-size: 60px;
 }
 
 body, h5 {
-    font-size: 35px;
+    font-size: 25px;
 }
 
 pre {
-    font-size: 30px;
+    font-size: 20px;
 }
 
 section {

@@ -81,14 +81,14 @@
 </ul>
 
 <h1 id="benchmark-programs" class='section-header'><a
-                           href="#benchmark-programs">Benchmark programs</a></h1>
-<pre><code class="language-cpp">for(int i = 0; i &lt; n; i++) {
-    asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
-    asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
-    /* ... */ 
-    asm volatile(&quot;mul.lo.u32 %0, %0, %1;&quot; : &quot;+r&quot;(op_a) : &quot;r&quot;(op_b));
+                           href="#benchmark-programs">Benchmark programs</a></h1><pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
 }
-</code></pre>
+</pre>
 
 <h1 id="integer-vs.-single-precision-floating-points" class='section-header'><a
                            href="#integer-vs.-single-precision-floating-points">Integer vs. Single-precision floating-points</a></h1>
