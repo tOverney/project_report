@@ -4,8 +4,7 @@ cd sliderust-master/
 ./build.sh
 cd ..
 
-git add .
-git commit -m "$1"
+git commit . -m "$1"
 git push origin master
 
 git checkout gh-pages
@@ -13,7 +12,7 @@ git checkout master sliderust-master/ pictures/ graphics/
 
 cd graphics/
 mogrify -format png *.pdf
-rm *.pdf
+git rm -r *.pdf
 cd ..
 
 git add .
