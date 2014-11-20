@@ -320,7 +320,7 @@
     \end{figure}
 
     \subsection{Graphics intersteps data}
-    The following tables describe the steps between running times in the graphics presented previously. Analysing them may allow to deduce properties of: 
+    The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
     \begin{itemize} 
         \item the cores' pipelines, if it represents the delay between dependencies checks;
         \item the scheduling mechanism, if it represents the delaying of threads operations in favor of the launch of other threads.
@@ -330,6 +330,27 @@
     \include{intersteps_times_1_SM_float}
     \pagebreak
     
+
+As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
+\begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
+           4 & $t_{16,1}$ & $t_{17,1}$ & ... & $t_{31,1}$ & $t_{48, 1}$ & ... & $t_{63, 1}$ \\ \hline
+    	   5 & - & - & ... & - & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   16 & - & - & ... & - & - & ... & - \\ \hline
+    	   17 & $t_{0,2}$ & $t_{1,2}$ & ... & $t_{15,2}$ & $t_{32,2}$ & ... & $t_{47,2}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 64 threads with interleaved dependent floating point number multiplication.}
+  	\label{fig:fp_prediction_64_halfdep}
+   \end{figure}
 
 
 \end{document}
