@@ -13,7 +13,7 @@ git checkout master sliderust-master/ pictures/ graphics/
 
 cd graphics/
 mogrify -format png *.pdf
-rm *.png
+rm *.pdf
 cd ..
 
 git commit -m "Automatic update of the slideshow"
