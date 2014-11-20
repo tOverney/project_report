@@ -11,7 +11,7 @@ November 21st, 2014
 * First approach
 * Fermi
 * Microbenchmarking
-* The future
+* What's next 
 
 
 # Goal of the project
@@ -28,11 +28,9 @@ Find a way to increase GPU performance for cryptographic applications.
 # First approach
 
 * First approach was to build hardware components
-    * Montgomery multiplier
-    * Larger multiplier
-
+  * Montgomery multiplier
+  * Larger multiplier
 * And mimic the Fermi's architecture
-
 * We tinkered on a simulator (gpgpu sim) to be able to test custom opcodes
 
 There was just too much things we didn’t know about Fermi.
@@ -73,9 +71,8 @@ for(int i = 0; i < n; i++) {
 # Integer vs. Single-precision floating-points
 
 * Running a million of operations
-    * Once for integer multiplication
-    * Once for sp-fp multiplication
-
+* Once for integer multiplication
+* Once for sp-fp multiplication
 * Expecting slightly lower performances for integer
 
 # Integer vs. Single-precision floating-points (2)
@@ -85,8 +82,15 @@ for(int i = 0; i < n; i++) {
 
 # Scheduling, first hypothesis
 
+* 16 stages pipeline
 * Only half of the cores have integer ALUs
 * No dependency check, confirmed by Nvidia's whitepaper on Fermi
+* Real timing should be around 16 millions cycles, probably some base cost is measured
+
+# For loop cost
+<div style="text-align: center; margin-top: 60px">
+<img src="../graphics/for-sizes-superpositions.png" width="70%" height="70%" >
+</div>
 
 # Scheduling, first hypothesis (2)
 <div style="text-align: center; margin-top: 60px">
@@ -107,7 +111,7 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
-# Dependence vs. Semi-independence (2)
+# Dependence vs. Semi-dependence
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
 </div>
