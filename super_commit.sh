@@ -12,7 +12,6 @@ git checkout master sliderust-master/ pictures/ graphics/
 
 cd graphics/
 mogrify -format png *.pdf
-git rm -r *.pdf
 cd ..
 
 git add .
