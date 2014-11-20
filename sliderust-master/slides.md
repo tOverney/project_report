@@ -87,17 +87,17 @@ for(int i = 0; i < n; i++) {
 * No dependency check, confirmed by Nvidia's whitepaper on Fermi
 
 # Scheduling, first hypothesis (2)
-<div style="text-align: center; margin-top: 40px">
+<div style="text-align: center; margin-top: 60px">
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
 # Integer vs. Single-precision floating-points (2)
-<div style="text-align: center; margin-top: 120px">
-<img src="../graphics/float_vs_int_running_times_nodep.png">
+<div style="text-align: center; margin-top: 60px">
+<img src="../graphics/float_vs_int_running_times_indep.png">
 </div>
 
 # Second scheduling hypothesis
-<div style="text-align: center; margin-top: 120px">
+<div style="text-align: center; margin-top: 60px">
 <img src="../graphics/scheduling_second.png">
 </div>
 
