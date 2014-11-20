@@ -43,7 +43,7 @@
     with 16 of these SMs.
     \begin{figure}[H]
     \centering
-        \includesvg[width=\scalingfactor\linewidth]{FermiSM}
+        %TODO replace with a real format or uncomment this line:\includesvg[width=\scalingfactor\linewidth]{FermiSM}
         \captionsetup{justification=centering}
 
         \caption{Fermi's streaming multiprocessor schematic representation}
@@ -133,19 +133,18 @@
     Figure~\ref{fig:fp_prediction_512}
     represents the hypothesis made about the pipeline depth when 512 threads are running, $C_1$ to
     $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the
-    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the thread number $k$ of the
-    warp $j$. 
+    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the $k$-eme instruction of the thread number $j$. 
         \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
     	    \hline
     	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
-    	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline 
-    	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & $t_{2, 17}$ & ... & $t_{2, 32}$ \\ \hline
-    	   3 & $t_{3,1}$ & $t_{3,2}$ & ... & $t_{3,16}$ & $t_{4, 1}$ & ... & $t_{4, 16}$ \\ \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{64,0}$ & $t_{65,0}$ & ... & $t_{79,0}$ & $t_{96, 0}$ & ... & $t_{111, 0}$ \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
-    	   16 & $t_{15,17}$ & $t_{15,18}$ & ... & $t_{15,32}$ & $t_{16,17}$ & ... & $t_{16, 32}$ \\ \hline
-    	   17 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline
+    	   16 & $t_{464,0}$ & $t_{465,0}$ & ... & $t_{479,0}$ & $t_{496,0}$ & ... & $t_{511, 0}$ \\ \hline
+    	   17 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
@@ -156,19 +155,19 @@
     Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 256
     threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
     has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first
-    group core is provided in integer multiplication but the second. $t_{j,k}$ is the thread number
-    $k$ of the warp $j$.
+    group core is provided in integer multiplication but the second. $t_{j,k}$ is the $k$-eme instruction of the thread number
+    $j$.
    \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
     	    \hline
     	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
-    	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & - & ... & - \\ \hline 
-    	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & - & ... & - \\ \hline
-    	   3 & $t_{2,1}$ & $t_{2,2}$ & ... & $t_{2,16}$ & - & ... & - \\ \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & - & ... & - \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & - & ... & - \\ \hline
+    	   3 & $t_{32,0}$ & $t_{33,0}$ & ... & $t_{47,0}$ & - & ... & - \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
-    	   16 & $t_{8,17}$ & $t_{8,18}$ & ... & $t_{8,32}$ & - & ... & - \\ \hline
-    	   17 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & - & ... & - \\ \hline
+    	   16 & $t_{240,0}$ & $t_{241,0}$ & ... & $t_{255,0}$ & - & ... & - \\ \hline
+    	   17 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & - & ... & - \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
@@ -198,14 +197,14 @@
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
     	    \hline
     	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
-    	   1 & $t_{1,1}$ & $t_{1,2}$ & ... & $t_{1,16}$ & $t_{2, 1}$ & ... & $t_{2, 16}$ \\ \hline 
-    	   2 & $t_{1,17}$ & $t_{1,18}$ & ... & $t_{1,32}$ & $t_{2, 17}$ & ... & $t_{2, 32}$ \\ \hline
-    	   3 & $t_{3,1}$ & $t_{3,2}$ & ... & $t_{3,16}$ & $t_{4, 1}$ & ... & $t_{4, 16}$ \\ \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{64,0}$ & $t_{65,0}$ & ... & $t_{79,0}$ & $t_{96, 0}$ & ... & $t_{111, 0}$ \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
-    	   16 & $t_{15,17}$ & $t_{15,18}$ & ... & $t_{15,32}$ & $t_{16,17}$ & ... & $t_{16, 32}$ \\ \hline
-    	   17 & $t_{17,1}$ & - & ... & - & $t_{1,1}$ & ... & $t_{1, 16}$ \\ \hline
-    	   18 & - & - & ... & - & $t_{1,17}$ & ... & $t_{1, 32}$ \\ \hline
-    	   19 & $t_{2,1}$ & $t_{2,2}$ & ... & $t_{2,16}$ & $t_{3,1}$ & ... & $t_{3,16}$ \\ \hline
+    	   16 & $t_{464,0}$ & $t_{465,0}$ & ... & $t_{479,0}$ & $t_{496,0}$ & ... & $t_{511, 0}$ \\ \hline
+    	   17 & $t_{512,0}$ & - & ... & - & - & ... & - \\ \hline
+    	   18 & - & - & ... & - & - & ... & - \\ \hline
+    	   19 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32,1}$ & ... & $t_{47,1}$ \\ \hline
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
@@ -263,6 +262,7 @@
 	
 	One million multiplication of each kind has been ran on 1 to 1024 threads to
     see if the results were comparable to the graph were there was only integer multiplication.
+	%TODO Update that hideous graph!
 	\begin{figure}[H]
 		\centering
 		\vspace{-20pt}
