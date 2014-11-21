@@ -33,7 +33,6 @@ November 21st, 2014
 * Focused on single-precision floating-point operations.
 * Lack of large multipliers for integers.
 
-<br/>
 <h2>Why Nvidia & Fermi architecture</h2>
 
 * Nividia's GPU are build around CUDA core.
