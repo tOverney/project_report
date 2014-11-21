@@ -87,6 +87,13 @@ http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instr
 </div>
 * How is the scheduling performed ? 
 
+# Integer vs. Floating-points
+
+* Running a million of operations
+* Once for integer multiplication
+* Once for floating point multiplication
+* Expecting lower performances for integer
+
 # Benchmark programs
 
 ```rust
@@ -106,13 +113,6 @@ for(int i = 0; i < n; i++) {
     a = a * b; 
 }
 ```
-
-# Integer vs. Floating-points
-
-* Running a million of operations
-* Once for integer multiplication
-* Once for floating point multiplication
-* Expecting slightly lower performances for integer
 
 # Integer vs. Single-precision floating-points (2)
 <div style="text-align: center; margin-top: 60px">

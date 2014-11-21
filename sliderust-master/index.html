@@ -132,6 +132,15 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <li>How is the scheduling performed ? </li>
 </ul>
 
+<h1 id="integer-vs.-floating-points" class='section-header'><a
+                           href="#integer-vs.-floating-points">Integer vs. Floating-points</a></h1>
+<ul>
+<li>Running a million of operations</li>
+<li>Once for integer multiplication</li>
+<li>Once for floating point multiplication</li>
+<li>Expecting lower performances for integer</li>
+</ul>
+
 <h1 id="benchmark-programs" class='section-header'><a
                            href="#benchmark-programs">Benchmark programs</a></h1><pre class='rust '>
 <span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
@@ -149,15 +158,6 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
     <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
 }
 </pre>
-
-<h1 id="integer-vs.-floating-points" class='section-header'><a
-                           href="#integer-vs.-floating-points">Integer vs. Floating-points</a></h1>
-<ul>
-<li>Running a million of operations</li>
-<li>Once for integer multiplication</li>
-<li>Once for floating point multiplication</li>
-<li>Expecting slightly lower performances for integer</li>
-</ul>
 
 <h1 id="integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
                            href="#integer-vs.-single-precision-floating-points-(2)">Integer vs. Single-precision floating-points (2)</a></h1>
