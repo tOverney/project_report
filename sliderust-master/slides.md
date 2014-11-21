@@ -45,12 +45,6 @@ There was just too much things we didn’t know about Fermi.
 * Fermi is closed and there is little to no precise informations about its microarchitecture
 * We had a Fermi card ready for some live measurement
 
-# Benchmarking cuda cores
-
-* Are (single-precision) floating-point and integer units really present in each core ?
-* How could the inferior integer performances be explained they are ?
-* How is the scheduling performed ? 
-
 # Fermi's Streaming Multiprocessor
 
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
@@ -66,6 +60,12 @@ http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.sv
 <br/>
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
+
+# Benchmarking cuda cores
+
+* Are (single-precision) floating-point and integer units really present in each core ?
+* How could the inferior integer performances be explained they are ?
+* How is the scheduling performed ? 
 
 # Benchmark programs
 
