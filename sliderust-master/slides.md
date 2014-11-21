@@ -123,7 +123,6 @@ for(int i = 0; i < n; i++) {
 
 * 18 stages pipeline
 * Only half of the cores have integer ALUs
-* No dependency check, confirmed by Nvidia's whitepaper on Fermi
 * Need to check the for-loop cost to validate
 
 # For loop cost
