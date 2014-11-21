@@ -52,15 +52,15 @@ There was just too much things we didn’t know about Fermi.
 
 <div style="text-align: center; margin-top: 10px">
 <img src="../pictures/Fermi.png" width="40%" height="40%">
-</div>
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
+</div>
 
 # CUDA Core
 
 <div style="text-align: center; margin-top: 80px">
 <img src="../pictures/CUDACore.png" width="40%" height="40%">
-</div>
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
+</div>
 
 # Benchmark programs
 
@@ -93,8 +93,8 @@ for(int i = 0; i < n; i++) {
 * Real timing should be around 16 millions cycles, probably some base cost is measured
 
 # For loop cost
-<div style="text-align: center; margin-top: 60px">
-<img src="../graphics/for-sizes-superpositions.png" width="70%" height="70%" >
+<div style="text-align: center; margin-top: 40px">
+<img src="../graphics/for-sizes-superpositions.png" width="50%" height="50%" >
 </div>
 
 # Scheduling, first hypothesis (2)
