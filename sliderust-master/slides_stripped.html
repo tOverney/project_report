@@ -52,8 +52,8 @@
 </ul></li>
 </ul>
 
-<h1 id="cryptography-on-gpu" class='section-header'><a
-                           href="#cryptography-on-gpu">Cryptography on GPU</a></h1>
+<h1 id="3.-cryptography-on-gpu" class='section-header'><a
+                           href="#3.-cryptography-on-gpu">3. Cryptography on GPU</a></h1>
 <h3> Pro </h3>
 
 <ul>
@@ -74,8 +74,8 @@
 <li>Fermi is their most recent architecture with decent integer multiplication throughput.</li>
 </ul>
 
-<h1 id="3.-first-approach" class='section-header'><a
-                           href="#3.-first-approach">3. First approach</a></h1>
+<h1 id="4.-first-approach" class='section-header'><a
+                           href="#4.-first-approach">4. First approach</a></h1>
 <ul>
 <li>First approach was to build hardware components
 
@@ -89,40 +89,40 @@
 
 <p>There was just too much things we didn’t know about Fermi.</p>
 
-<h1 id="4.-microbenchmarking" class='section-header'><a
-                           href="#4.-microbenchmarking">4. Microbenchmarking</a></h1>
+<h1 id="5.-microbenchmarking" class='section-header'><a
+                           href="#5.-microbenchmarking">5. Microbenchmarking</a></h1>
 <ul>
 <li>We need to have a better understanding of the Fermi architecture</li>
 <li>Fermi is closed and there is little to no precise informations about its microarchitecture</li>
 <li>We had a Fermi card ready for some live measurement</li>
 </ul>
 
-<h1 id="5.-fermi&#39;s-streaming-multiprocessor" class='section-header'><a
-                           href="#5.-fermi&#39;s-streaming-multiprocessor">5. Fermi&#39;s Streaming Multiprocessor</a></h1>
+<h1 id="6.-fermi&#39;s-streaming-multiprocessor" class='section-header'><a
+                           href="#6.-fermi&#39;s-streaming-multiprocessor">6. Fermi&#39;s Streaming Multiprocessor</a></h1>
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
 <img src="../pictures/Fermi.png" width="35%" height="35%">
 <br/>
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
 </div>
 
-<h1 id="6.-cuda-core" class='section-header'><a
-                           href="#6.-cuda-core">6. CUDA Core</a></h1>
+<h1 id="7.-cuda-core" class='section-header'><a
+                           href="#7.-cuda-core">7. CUDA Core</a></h1>
 <div style="text-align: center; margin-top: 80px; font-size:14pt">
 <img src="../pictures/CUDACore.png" width="40%" height="40%">
 <br/>
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
 
-<h1 id="7.-blocks,-warps,-scheduling" class='section-header'><a
-                           href="#7.-blocks,-warps,-scheduling">7. Blocks, warps, scheduling</a></h1>
+<h1 id="8.-blocks,-warps,-scheduling" class='section-header'><a
+                           href="#8.-blocks,-warps,-scheduling">8. Blocks, warps, scheduling</a></h1>
 <ul>
 <li>A block of threads runs on a dedicated SM and has a maximum size of 1024</li>
 <li>A warp consists of 32 threads</li>
 <li>Each scheduling cycle, a half of two different warps are scheduled</li>
 </ul>
 
-<h1 id="8.-benchmarking-cuda-cores" class='section-header'><a
-                           href="#8.-benchmarking-cuda-cores">8. Benchmarking cuda cores</a></h1>
+<h1 id="9.-benchmarking-cuda-cores" class='section-header'><a
+                           href="#9.-benchmarking-cuda-cores">9. Benchmarking cuda cores</a></h1>
 <ul>
 <li>Are (single-precision) floating-point and integer units really present in each core ?</li>
 <li>How can the inferior integer operations throughput compared to floating-points be explained ?
@@ -134,8 +134,8 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <li>How is the scheduling performed ? </li>
 </ul>
 
-<h1 id="9.-integer-vs.-floating-points" class='section-header'><a
-                           href="#9.-integer-vs.-floating-points">9. Integer vs. Floating-points</a></h1>
+<h1 id="10.-integer-vs.-floating-points" class='section-header'><a
+                           href="#10.-integer-vs.-floating-points">10. Integer vs. Floating-points</a></h1>
 <ul>
 <li>Running a million of operations</li>
 <li>Once for integer multiplication</li>
@@ -143,8 +143,8 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <li>Expecting lower performances for integer</li>
 </ul>
 
-<h1 id="10.-benchmark-programs" class='section-header'><a
-                           href="#10.-benchmark-programs">10. Benchmark programs</a></h1><pre class='rust '>
+<h1 id="11.-benchmark-programs" class='section-header'><a
+                           href="#11.-benchmark-programs">11. Benchmark programs</a></h1><pre class='rust '>
 <span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
@@ -161,34 +161,34 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 }
 </pre>
 
-<h1 id="11.-integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
-                           href="#11.-integer-vs.-single-precision-floating-points-(2)">11. Integer vs. Single-precision floating-points (2)</a></h1>
+<h1 id="12.-integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
+                           href="#12.-integer-vs.-single-precision-floating-points-(2)">12. Integer vs. Single-precision floating-points (2)</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_vs_int_running_times.png">
 </div>
 
-<h1 id="12.-scheduling,-first-hypothesis" class='section-header'><a
-                           href="#12.-scheduling,-first-hypothesis">12. Scheduling, first hypothesis</a></h1>
+<h1 id="13.-scheduling,-first-hypothesis" class='section-header'><a
+                           href="#13.-scheduling,-first-hypothesis">13. Scheduling, first hypothesis</a></h1>
 <ul>
 <li>18 stages pipeline</li>
 <li>Only half of the cores have integer ALUs</li>
 <li>Need to check the for-loop cost to validate</li>
 </ul>
 
-<h1 id="13.-for-loop-cost" class='section-header'><a
-                           href="#13.-for-loop-cost">13. For loop cost</a></h1>
+<h1 id="14.-for-loop-cost" class='section-header'><a
+                           href="#14.-for-loop-cost">14. For loop cost</a></h1>
 <div style="text-align: center; margin-top: 40px">
 <img src="../graphics/for-sizes-superpositions.png" width="50%" height="50%" >
 </div>
 
-<h1 id="14.-scheduling,-first-hypothesis-(2)" class='section-header'><a
-                           href="#14.-scheduling,-first-hypothesis-(2)">14. Scheduling, first hypothesis (2)</a></h1>
+<h1 id="15.-scheduling,-first-hypothesis-(2)" class='section-header'><a
+                           href="#15.-scheduling,-first-hypothesis-(2)">15. Scheduling, first hypothesis (2)</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-<h1 id="15.-semi-dependencies-benchmark-program" class='section-header'><a
-                           href="#15.-semi-dependencies-benchmark-program">15. Semi-dependencies benchmark program</a></h1><pre class='rust '>
+<h1 id="16.-semi-dependencies-benchmark-program" class='section-header'><a
+                           href="#16.-semi-dependencies-benchmark-program">16. Semi-dependencies benchmark program</a></h1><pre class='rust '>
 <span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
@@ -211,36 +211,36 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 }
 </pre>
 
-<h1 id="16.-dependence-vs.-semi-dependence" class='section-header'><a
-                           href="#16.-dependence-vs.-semi-dependence">16. Dependence vs. Semi-dependence</a></h1>
+<h1 id="17.-dependence-vs.-semi-dependence" class='section-header'><a
+                           href="#17.-dependence-vs.-semi-dependence">17. Dependence vs. Semi-dependence</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
 </div>
 
-<h1 id="second-scheduling-hypothesis" class='section-header'><a
-                           href="#second-scheduling-hypothesis">Second scheduling hypothesis</a></h1>
+<h1 id="18.-second-scheduling-hypothesis" class='section-header'><a
+                           href="#18.-second-scheduling-hypothesis">18. Second scheduling hypothesis</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../pictures/table_064t_float_5050dep.png" width="70%" height="70%">
 </div>
 
-<h1 id="17.-conclusions" class='section-header'><a
-                           href="#17.-conclusions">17. Conclusions</a></h1>
+<h1 id="19.-conclusions" class='section-header'><a
+                           href="#19.-conclusions">19. Conclusions</a></h1>
 <ul>
 <li>We can gain space by removed/replacing SFUs</li>
 <li>Only 16 cores have integer multiplication capabilities, so 16 can be replaced</li>
 <li>New components don&#39;t need to be optimized in term of latency (up to 18 cycles)</li>
 </ul>
 
-<h1 id="18.-what&#39;s-next" class='section-header'><a
-                           href="#18.-what&#39;s-next">18. What&#39;s next</a></h1>
+<h1 id="20.-what&#39;s-next" class='section-header'><a
+                           href="#20.-what&#39;s-next">20. What&#39;s next</a></h1>
 <ul>
 <li>Understand scheduling mechanism for a mix of operation types</li>
 <li>Hardware implementation of specific algorithms in less than 18 cycles</li>
 <li>Simulation of changes using a modified version of gpgpu-sim</li>
 </ul>
 
-<h1 id="19.-questions" class='section-header'><a
-                           href="#19.-questions">19. Questions</a></h1>
+<h1 id="21.-questions" class='section-header'><a
+                           href="#21.-questions">21. Questions</a></h1>
 <div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
 <br/>
