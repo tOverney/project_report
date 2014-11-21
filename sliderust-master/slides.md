@@ -151,6 +151,12 @@ for(int i = 0; i < n; i++) {
 <img src="../pictures/table_064t_float_5050dep.png" width="70%" height="70%">
 </div>
 
+# Conclusions
+
+* We can gain space by replacing SFUs
+* Only 16 cores have integer capabilities, so 16 can be replaced
+* New components don't need to be optimized in term of latency
+
 # What's next
 
 * Determine what can be removed from a Fermi card for our purpose
