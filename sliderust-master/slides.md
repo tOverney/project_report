@@ -101,10 +101,10 @@ for(int i = 0; i < n; i++) {
 
 # Scheduling, first hypothesis
 
-* 16 stages pipeline
+* 18 stages pipeline
 * Only half of the cores have integer ALUs
 * No dependency check, confirmed by Nvidia's whitepaper on Fermi
-* Real timing should be around 16 millions cycles, probably some base cost is measured
+* Need to check the for-loop cost to validate
 
 # For loop cost
 <div style="text-align: center; margin-top: 40px">
