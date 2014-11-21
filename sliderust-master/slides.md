@@ -17,7 +17,10 @@ November 21st, 2014
 
 # Goal of the project
 
-Find a way to increase GPU performance for cryptographic applications.
+* Increase GPU performance for cryptographic applications.
+  * Understanding current limitations of cryptography on GPUs
+  * Understanding the microarchitecture of currently used GPUs
+  * Find a way to change this architecture to improve performances of cryptographic applications
 
 # Cryptography on GPU // c'est p-ê trop proche de la slide précédente mais je ne vois pas comment séparer mieux!
 
