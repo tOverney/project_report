@@ -123,7 +123,7 @@ for(int i = 0; i < n; i++) {
 
 # Second scheduling hypothesis
 <div style="text-align: center; margin-top: 60px">
-<img src="../graphics/table_064t_float_5050dep.png">
+<img src="../pictures/table_064t_float_5050dep.png">
 </div>
 
 # What's next
