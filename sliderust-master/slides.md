@@ -9,8 +9,9 @@ November 21st, 2014
 * Goal of the project
 * Cryptography on GPU
 * First approach
-* Fermi
 * Microbenchmarking
+* Fermi
+* Microbenchmarking results
 * What's next 
 
 
@@ -43,8 +44,8 @@ There was just too much things we didn’t know about Fermi.
 
 # Benchmarking cuda cores
 
-* Are floating points and int ALUs really present at a 1:1 ratio ?
-* How could the inferior integer performances be explained if yes ?
+* Are (single-precision) floating-point and integer units really present in each core ?
+* How could the inferior integer performances be explained they are ?
 * How is the scheduling performed ? 
 
 # Fermi's Streaming Multiprocessor
@@ -52,7 +53,7 @@ There was just too much things we didn’t know about Fermi.
 <div style="text-align: center; margin-top: 10px">
 <img src="../pictures/Fermi.png" width="40%" height="40%">
 </div>
-
+http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
 # CUDA Core
 
 <div style="text-align: center; margin-top: 80px">
@@ -71,11 +72,11 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
-# Integer vs. Single-precision floating-points
+# Integer vs. Floating-points
 
 * Running a million of operations
 * Once for integer multiplication
-* Once for sp-fp multiplication
+* Once for floating point multiplication
 * Expecting slightly lower performances for integer
 
 # Integer vs. Single-precision floating-points (2)
@@ -121,7 +122,7 @@ for(int i = 0; i < n; i++) {
 
 # Second scheduling hypothesis
 <div style="text-align: center; margin-top: 60px">
-<img src="../graphics/scheduling_second.png">
+<img src="../graphics/table_064t_float_5050_dep.png">
 </div>
 
 # What's next
