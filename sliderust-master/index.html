@@ -52,11 +52,24 @@
 
 <h1 id="cryptography-on-gpu" class='section-header'><a
                            href="#cryptography-on-gpu">Cryptography on GPU</a></h1>
+<h3> Pro </h3>
+
 <ul>
 <li>High level of parallelism, ideal for cryptographic algorithms.</li>
-<li>But GPU’s principal focus are single-precision floating-point number operations.</li>
-<li>Nividia’s Fermi is the most recent architecture with decent integer number operation.</li>
-<li>Lack of large multipliers for integers</li>
+</ul>
+
+<h3> Cons</h3>
+
+<ul>
+<li>Focused on single-precision floating-point operations.</li>
+<li>Lack of large multipliers for integers.</li>
+</ul>
+
+<h2>Why Nvidia & Fermi architecture</h2>
+
+<ul>
+<li>Nividia&#39;s GPU are build around CUDA core.</li>
+<li>Fermi is their most recent architecture with decent integer operation throughput.</li>
 </ul>
 
 <h1 id="first-approach" class='section-header'><a
@@ -184,6 +197,12 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <li>Hardware implementation of specific algorithms in less than 16 cycles</li>
 <li>Simulation of changes using a modified version of gpgpu-sim</li>
 </ul>
+
+<h1 id="questions" class='section-header'><a
+                           href="#questions">Questions</a></h1>
+<div style="text-align: center; margin-top: 60px">
+<img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+</div>
 
     <script type="text/javascript">
         window.playgroundUrl = "";
