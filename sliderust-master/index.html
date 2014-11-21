@@ -26,8 +26,8 @@
 
 <p>November 21st, 2014</p>
 
-<h1 id="summary" class='section-header'><a
-                           href="#summary">Summary</a></h1>
+<h1 id="1.-summary" class='section-header'><a
+                           href="#1.-summary">1. Summary</a></h1>
 <ul>
 <li>Goal of the project</li>
 <li>Cryptography on GPU</li>
@@ -35,11 +35,13 @@
 <li>Microbenchmarking</li>
 <li>Fermi</li>
 <li>Microbenchmarking results</li>
+<li>Conclusions</li>
 <li>What&#39;s next </li>
+<li>Questions</li>
 </ul>
 
-<h1 id="goal-of-the-project" class='section-header'><a
-                           href="#goal-of-the-project">Goal of the project</a></h1>
+<h1 id="2.-goal-of-the-project" class='section-header'><a
+                           href="#2.-goal-of-the-project">2. Goal of the project</a></h1>
 <ul>
 <li>Increase GPU performance for cryptographic applications.
 
@@ -69,11 +71,11 @@
 
 <ul>
 <li>Nividia&#39;s GPU are build around CUDA core.</li>
-<li>Fermi is their most recent architecture with decent integer operation throughput.</li>
+<li>Fermi is their most recent architecture with decent integer multiplication throughput.</li>
 </ul>
 
-<h1 id="first-approach" class='section-header'><a
-                           href="#first-approach">First approach</a></h1>
+<h1 id="3.-first-approach" class='section-header'><a
+                           href="#3.-first-approach">3. First approach</a></h1>
 <ul>
 <li>First approach was to build hardware components
 
@@ -87,99 +89,106 @@
 
 <p>There was just too much things we didn’t know about Fermi.</p>
 
-<h1 id="microbenchmarking" class='section-header'><a
-                           href="#microbenchmarking">Microbenchmarking</a></h1>
+<h1 id="4.-microbenchmarking" class='section-header'><a
+                           href="#4.-microbenchmarking">4. Microbenchmarking</a></h1>
 <ul>
 <li>We need to have a better understanding of the Fermi architecture</li>
 <li>Fermi is closed and there is little to no precise informations about its microarchitecture</li>
 <li>We had a Fermi card ready for some live measurement</li>
 </ul>
 
-<h1 id="fermi&#39;s-streaming-multiprocessor" class='section-header'><a
-                           href="#fermi&#39;s-streaming-multiprocessor">Fermi&#39;s Streaming Multiprocessor</a></h1>
+<h1 id="5.-fermi&#39;s-streaming-multiprocessor" class='section-header'><a
+                           href="#5.-fermi&#39;s-streaming-multiprocessor">5. Fermi&#39;s Streaming Multiprocessor</a></h1>
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
 <img src="../pictures/Fermi.png" width="35%" height="35%">
 <br/>
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
 </div>
 
-<h1 id="cuda-core" class='section-header'><a
-                           href="#cuda-core">CUDA Core</a></h1>
+<h1 id="6.-cuda-core" class='section-header'><a
+                           href="#6.-cuda-core">6. CUDA Core</a></h1>
 <div style="text-align: center; margin-top: 80px; font-size:14pt">
 <img src="../pictures/CUDACore.png" width="40%" height="40%">
 <br/>
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
 
-<h1 id="blocks,-warps,-scheduling" class='section-header'><a
-                           href="#blocks,-warps,-scheduling">Blocks, warps, scheduling</a></h1>
+<h1 id="7.-blocks,-warps,-scheduling" class='section-header'><a
+                           href="#7.-blocks,-warps,-scheduling">7. Blocks, warps, scheduling</a></h1>
 <ul>
-<li>The block size is the number of threads that will run a kernel</li>
+<li>A block of threads runs on a dedicated SM and has a maximum size of 1024</li>
 <li>A warp consists of 32 threads</li>
 <li>Each scheduling cycle, a half of two different warps are scheduled</li>
 </ul>
 
-<h1 id="benchmarking-cuda-cores" class='section-header'><a
-                           href="#benchmarking-cuda-cores">Benchmarking cuda cores</a></h1>
+<h1 id="8.-benchmarking-cuda-cores" class='section-header'><a
+                           href="#8.-benchmarking-cuda-cores">8. Benchmarking cuda cores</a></h1>
 <ul>
 <li>Are (single-precision) floating-point and integer units really present in each core ?</li>
-<li>How could the inferior integer performances be explained they are ?
+<li>How can the inferior integer operations throughput compared to floating-points be explained ?
 <div style="text-align: center; margin-top: 10px; font-size:11pt">
-<img src="../pictures/THROUGHPUT_TABLE.png" width="40%" height="40%">
+<img src="../pictures/THROUGHPUT_TABLE.png" width="57%" height="57%">
 <br/>
 <a href="http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions__throughput-native-arithmetic-instructions">http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions__throughput-native-arithmetic-instructions</a>
 </div></li>
 <li>How is the scheduling performed ? </li>
 </ul>
 
-<h1 id="benchmark-programs" class='section-header'><a
-                           href="#benchmark-programs">Benchmark programs</a></h1><pre class='rust '>
-<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
-    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
-    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
-    <span class='comment'>/* ... */</span> 
-    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
-}
-</pre>
-
-<h1 id="integer-vs.-floating-points" class='section-header'><a
-                           href="#integer-vs.-floating-points">Integer vs. Floating-points</a></h1>
+<h1 id="9.-integer-vs.-floating-points" class='section-header'><a
+                           href="#9.-integer-vs.-floating-points">9. Integer vs. Floating-points</a></h1>
 <ul>
 <li>Running a million of operations</li>
 <li>Once for integer multiplication</li>
 <li>Once for floating point multiplication</li>
-<li>Expecting slightly lower performances for integer</li>
+<li>Expecting lower performances for integer</li>
 </ul>
 
-<h1 id="integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
-                           href="#integer-vs.-single-precision-floating-points-(2)">Integer vs. Single-precision floating-points (2)</a></h1>
+<h1 id="10.-benchmark-programs" class='section-header'><a
+                           href="#10.-benchmark-programs">10. Benchmark programs</a></h1><pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+}
+</pre>
+<pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+}
+</pre>
+
+<h1 id="11.-integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
+                           href="#11.-integer-vs.-single-precision-floating-points-(2)">11. Integer vs. Single-precision floating-points (2)</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_vs_int_running_times.png">
 </div>
 
-<h1 id="scheduling,-first-hypothesis" class='section-header'><a
-                           href="#scheduling,-first-hypothesis">Scheduling, first hypothesis</a></h1>
+<h1 id="12.-scheduling,-first-hypothesis" class='section-header'><a
+                           href="#12.-scheduling,-first-hypothesis">12. Scheduling, first hypothesis</a></h1>
 <ul>
 <li>18 stages pipeline</li>
 <li>Only half of the cores have integer ALUs</li>
-<li>No dependency check, confirmed by Nvidia&#39;s whitepaper on Fermi</li>
 <li>Need to check the for-loop cost to validate</li>
 </ul>
 
-<h1 id="for-loop-cost" class='section-header'><a
-                           href="#for-loop-cost">For loop cost</a></h1>
+<h1 id="13.-for-loop-cost" class='section-header'><a
+                           href="#13.-for-loop-cost">13. For loop cost</a></h1>
 <div style="text-align: center; margin-top: 40px">
 <img src="../graphics/for-sizes-superpositions.png" width="50%" height="50%" >
 </div>
 
-<h1 id="scheduling,-first-hypothesis-(2)" class='section-header'><a
-                           href="#scheduling,-first-hypothesis-(2)">Scheduling, first hypothesis (2)</a></h1>
+<h1 id="14.-scheduling,-first-hypothesis-(2)" class='section-header'><a
+                           href="#14.-scheduling,-first-hypothesis-(2)">14. Scheduling, first hypothesis (2)</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-<h1 id="semi-dependencies-benchmark-program" class='section-header'><a
-                           href="#semi-dependencies-benchmark-program">Semi-dependencies benchmark program</a></h1><pre class='rust '>
+<h1 id="15.-semi-dependencies-benchmark-program" class='section-header'><a
+                           href="#15.-semi-dependencies-benchmark-program">15. Semi-dependencies benchmark program</a></h1><pre class='rust '>
 <span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
@@ -190,9 +199,20 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
 }
 </pre>
+<pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+}
+</pre>
 
-<h1 id="dependence-vs.-semi-dependence" class='section-header'><a
-                           href="#dependence-vs.-semi-dependence">Dependence vs. Semi-dependence</a></h1>
+<h1 id="16.-dependence-vs.-semi-dependence" class='section-header'><a
+                           href="#16.-dependence-vs.-semi-dependence">16. Dependence vs. Semi-dependence</a></h1>
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
 </div>
@@ -203,18 +223,28 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <img src="../pictures/table_064t_float_5050dep.png" width="70%" height="70%">
 </div>
 
-<h1 id="what&#39;s-next" class='section-header'><a
-                           href="#what&#39;s-next">What&#39;s next</a></h1>
+<h1 id="17.-conclusions" class='section-header'><a
+                           href="#17.-conclusions">17. Conclusions</a></h1>
 <ul>
-<li>Determine what can be removed from a Fermi card for our purpose</li>
-<li>Hardware implementation of specific algorithms in less than 16 cycles</li>
+<li>We can gain space by removed/replacing SFUs</li>
+<li>Only 16 cores have integer multiplication capabilities, so 16 can be replaced</li>
+<li>New components don&#39;t need to be optimized in term of latency (up to 18 cycles)</li>
+</ul>
+
+<h1 id="18.-what&#39;s-next" class='section-header'><a
+                           href="#18.-what&#39;s-next">18. What&#39;s next</a></h1>
+<ul>
+<li>Understand scheduling mechanism for a mix of operation types</li>
+<li>Hardware implementation of specific algorithms in less than 18 cycles</li>
 <li>Simulation of changes using a modified version of gpgpu-sim</li>
 </ul>
 
-<h1 id="questions" class='section-header'><a
-                           href="#questions">Questions</a></h1>
-<div style="text-align: center; margin-top: 60px">
+<h1 id="19.-questions" class='section-header'><a
+                           href="#19.-questions">19. Questions</a></h1>
+<div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+<br/>
+http://inotternews.com/wp-content/uploads/2013/09/190_1jeross_pb02_29.jpg
 </div>
 
     <script type="text/javascript">
