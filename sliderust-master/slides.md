@@ -54,12 +54,6 @@ There was just too much things we didn’t know about Fermi.
 * Fermi is closed and there is little to no precise informations about its microarchitecture
 * We had a Fermi card ready for some live measurement
 
-# Benchmarking cuda cores
-
-* Are (single-precision) floating-point and integer units really present in each core ?
-* How could the inferior integer performances be explained they are ?
-* How is the scheduling performed ? 
-
 # Fermi's Streaming Multiprocessor
 
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
@@ -75,6 +69,23 @@ http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.sv
 <br/>
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
+
+# Blocks, warps, scheduling
+
+* The block size is the number of threads that will run a kernel
+* A warp consists of 32 threads
+* Each scheduling cycle, a half of two different warps are scheduled
+
+# Benchmarking cuda cores
+
+* Are (single-precision) floating-point and integer units really present in each core ?
+* How could the inferior integer performances be explained they are ?
+<div style="text-align: center; margin-top: 10px; font-size:11pt">
+<img src="../pictures/THROUGHPUT_TABLE.png" width="40%" height="40%">
+<br/>
+http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions__throughput-native-arithmetic-instructions
+</div>
+* How is the scheduling performed ? 
 
 # Benchmark programs
 
@@ -101,10 +112,10 @@ for(int i = 0; i < n; i++) {
 
 # Scheduling, first hypothesis
 
-* 16 stages pipeline
+* 18 stages pipeline
 * Only half of the cores have integer ALUs
 * No dependency check, confirmed by Nvidia's whitepaper on Fermi
-* Real timing should be around 16 millions cycles, probably some base cost is measured
+* Need to check the for-loop cost to validate
 
 # For loop cost
 <div style="text-align: center; margin-top: 40px">
