@@ -98,6 +98,15 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
+```rust
+for(int i = 0; i < n; i++) {
+    a = a * b; 
+    a = a * b; 
+    /* ... */ 
+    a = a * b; 
+}
+```
+
 # Integer vs. Floating-points
 
 * Running a million of operations
@@ -141,6 +150,18 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
+```rust
+for(int i = 0; i < n; i++) {
+    a = a * b;
+    c = c * d; 
+    a = a * b;
+    c = c * d; 
+    /* ... */ 
+    a = a * b;
+    c = c * d; 
+}
+```
+
 # Dependence vs. Semi-dependence
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
@@ -153,9 +174,9 @@ for(int i = 0; i < n; i++) {
 
 # Conclusions
 
-* We can gain space by replacing SFUs
+* We can gain space by removed/replacing SFUs
 * Only 16 cores have integer capabilities, so 16 can be replaced
-* New components don't need to be optimized in term of latency
+* New components don't need to be optimized in term of latency (up to 18 cycles)
 
 # What's next
 
@@ -165,6 +186,7 @@ for(int i = 0; i < n; i++) {
 
 # Questions
 
-<div style="text-align: center; margin-top: 60px">
+<div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+http://inotternews.com/wp-content/uploads/2013/09/190_1jeross_pb02_29.jpg
 </div>

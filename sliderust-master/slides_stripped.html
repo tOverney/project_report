@@ -141,6 +141,14 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
 }
 </pre>
+<pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>; 
+}
+</pre>
 
 <h1 id="integer-vs.-floating-points" class='section-header'><a
                            href="#integer-vs.-floating-points">Integer vs. Floating-points</a></h1>
@@ -190,6 +198,17 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
     <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
 }
 </pre>
+<pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>a</span> <span class='op'>*</span> <span class='ident'>b</span>;
+    <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span> <span class='op'>*</span> <span class='ident'>d</span>; 
+}
+</pre>
 
 <h1 id="dependence-vs.-semi-dependence" class='section-header'><a
                            href="#dependence-vs.-semi-dependence">Dependence vs. Semi-dependence</a></h1>
@@ -206,9 +225,9 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <h1 id="conclusions" class='section-header'><a
                            href="#conclusions">Conclusions</a></h1>
 <ul>
-<li>We can gain space by replacing SFUs</li>
+<li>We can gain space by removed/replacing SFUs</li>
 <li>Only 16 cores have integer capabilities, so 16 can be replaced</li>
-<li>New components don&#39;t need to be optimized in term of latency</li>
+<li>New components don&#39;t need to be optimized in term of latency (up to 18 cycles)</li>
 </ul>
 
 <h1 id="what&#39;s-next" class='section-header'><a
@@ -221,8 +240,9 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 
 <h1 id="questions" class='section-header'><a
                            href="#questions">Questions</a></h1>
-<div style="text-align: center; margin-top: 60px">
+<div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+http://inotternews.com/wp-content/uploads/2013/09/190_1jeross_pb02_29.jpg
 </div>
 
     <script type="text/javascript">
