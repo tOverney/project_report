@@ -80,6 +80,12 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 
 * Are (single-precision) floating-point and integer units really present in each core ?
 * How could the inferior integer performances be explained they are ?
+<div style="text-align: center; margin-top: 10px; font-size:11pt">
+<img src="../pictures/THROUGHPUT_TABLE.png" width="40%" height="40%">
+<br/>
+http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions__throughput-native-arithmetic-instructions
+</div>
+
 * How is the scheduling performed ? 
 
 # Benchmark programs
