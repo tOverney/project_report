@@ -179,13 +179,14 @@ for(int i = 0; i < n; i++) {
 
 # What's next
 
-* Determine what can be removed from a Fermi card for our purpose
-* Hardware implementation of specific algorithms in less than 16 cycles
+* Understand scheduling mechanism for a mix of operation types
+* Hardware implementation of specific algorithms in less than 18 cycles
 * Simulation of changes using a modified version of gpgpu-sim
 
 # Questions
 
 <div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+<br/>
 http://inotternews.com/wp-content/uploads/2013/09/190_1jeross_pb02_29.jpg
 </div>
