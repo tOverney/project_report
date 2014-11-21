@@ -73,7 +73,7 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 
 # Blocks, warps, scheduling
 
-* A block of threads runs on a dedicated SM.
+* A block of threads runs on a dedicated SM and has a maximum size of 1024
 * A warp consists of 32 threads
 * Each scheduling cycle, a half of two different warps are scheduled
 
