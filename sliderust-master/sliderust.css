@@ -43,6 +43,7 @@ pre, code {
 
 ul {
     list-style: none;
+    line-height: 250%;
 }
 
 li::before {

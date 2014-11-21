@@ -32,14 +32,23 @@
 <li>Goal of the project</li>
 <li>Cryptography on GPU</li>
 <li>First approach</li>
-<li>Fermi</li>
 <li>Microbenchmarking</li>
-<li>The future</li>
+<li>Fermi</li>
+<li>Microbenchmarking results</li>
+<li>What&#39;s next </li>
 </ul>
 
 <h1 id="goal-of-the-project" class='section-header'><a
                            href="#goal-of-the-project">Goal of the project</a></h1>
-<p>Find a way to increase GPU performance for cryptographic applications.</p>
+<ul>
+<li>Increase GPU performance for cryptographic applications.
+
+<ul>
+<li>Understanding current limitations of cryptography on GPUs</li>
+<li>Understanding the microarchitecture of currently used GPUs</li>
+<li>Find a way to change this architecture to improve performances of cryptographic applications</li>
+</ul></li>
+</ul>
 
 <h1 id="cryptography-on-gpu" class='section-header'><a
                            href="#cryptography-on-gpu">Cryptography on GPU</a></h1>
@@ -65,18 +74,6 @@
 
 <p>There was just too much things we didn’t know about Fermi.</p>
 
-<h1 id="fermi&#39;s-streaming-multiprocessor" class='section-header'><a
-                           href="#fermi&#39;s-streaming-multiprocessor">Fermi&#39;s Streaming Multiprocessor</a></h1>
-<div style="text-align: center; margin-top: 10px">
-<img src="../pictures/Fermi.png" width="40%" height="40%">
-</div>
-
-<h1 id="cuda-core" class='section-header'><a
-                           href="#cuda-core">CUDA Core</a></h1>
-<div style="text-align: center; margin-top: 80px">
-<img src="../pictures/CUDACore.png" width="40%" height="40%">
-</div>
-
 <h1 id="microbenchmarking" class='section-header'><a
                            href="#microbenchmarking">Microbenchmarking</a></h1>
 <ul>
@@ -88,10 +85,26 @@
 <h1 id="benchmarking-cuda-cores" class='section-header'><a
                            href="#benchmarking-cuda-cores">Benchmarking cuda cores</a></h1>
 <ul>
-<li>Are floating points and int ALUs really present at a 1:1 ratio ?</li>
-<li>How could the inferior integer performances be explained if yes ?</li>
+<li>Are (single-precision) floating-point and integer units really present in each core ?</li>
+<li>How could the inferior integer performances be explained they are ?</li>
 <li>How is the scheduling performed ? </li>
 </ul>
+
+<h1 id="fermi&#39;s-streaming-multiprocessor" class='section-header'><a
+                           href="#fermi&#39;s-streaming-multiprocessor">Fermi&#39;s Streaming Multiprocessor</a></h1>
+<div style="text-align: center; margin-top: 10px; font-size:14pt">
+<img src="../pictures/Fermi.png" width="35%" height="35%">
+<br/>
+http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
+</div>
+
+<h1 id="cuda-core" class='section-header'><a
+                           href="#cuda-core">CUDA Core</a></h1>
+<div style="text-align: center; margin-top: 80px; font-size:14pt">
+<img src="../pictures/CUDACore.png" width="40%" height="40%">
+<br/>
+http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
+</div>
 
 <h1 id="benchmark-programs" class='section-header'><a
                            href="#benchmark-programs">Benchmark programs</a></h1><pre class='rust '>
@@ -103,16 +116,13 @@
 }
 </pre>
 
-<h1 id="integer-vs.-single-precision-floating-points" class='section-header'><a
-                           href="#integer-vs.-single-precision-floating-points">Integer vs. Single-precision floating-points</a></h1>
+<h1 id="integer-vs.-floating-points" class='section-header'><a
+                           href="#integer-vs.-floating-points">Integer vs. Floating-points</a></h1>
 <ul>
-<li><p>Running a million of operations</p>
-
-<ul>
+<li>Running a million of operations</li>
 <li>Once for integer multiplication</li>
-<li>Once for sp-fp multiplication</li>
-</ul></li>
-<li><p>Expecting slightly lower performances for integer</p></li>
+<li>Once for floating point multiplication</li>
+<li>Expecting slightly lower performances for integer</li>
 </ul>
 
 <h1 id="integer-vs.-single-precision-floating-points-(2)" class='section-header'><a
@@ -124,9 +134,17 @@
 <h1 id="scheduling,-first-hypothesis" class='section-header'><a
                            href="#scheduling,-first-hypothesis">Scheduling, first hypothesis</a></h1>
 <ul>
+<li>16 stages pipeline</li>
 <li>Only half of the cores have integer ALUs</li>
 <li>No dependency check, confirmed by Nvidia&#39;s whitepaper on Fermi</li>
+<li>Real timing should be around 16 millions cycles, probably some base cost is measured</li>
 </ul>
+
+<h1 id="for-loop-cost" class='section-header'><a
+                           href="#for-loop-cost">For loop cost</a></h1>
+<div style="text-align: center; margin-top: 40px">
+<img src="../graphics/for-sizes-superpositions.png" width="50%" height="50%" >
+</div>
 
 <h1 id="scheduling,-first-hypothesis-(2)" class='section-header'><a
                            href="#scheduling,-first-hypothesis-(2)">Scheduling, first hypothesis (2)</a></h1>
@@ -134,16 +152,29 @@
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-<h1 id="integer-vs.-single-precision-floating-points-(2)-1" class='section-header'><a
-                           href="#integer-vs.-single-precision-floating-points-(2)-1">Integer vs. Single-precision floating-points (2)</a></h1>
+<h1 id="semi-dependencies-benchmark-program" class='section-header'><a
+                           href="#semi-dependencies-benchmark-program">Semi-dependencies benchmark program</a></h1><pre class='rust '>
+<span class='kw'>for</span>(<span class='ident'>int</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>0</span>; <span class='ident'>i</span> <span class='op'>&lt;</span> <span class='ident'>n</span>; <span class='ident'>i</span><span class='op'>+</span><span class='op'>+</span>) {
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
+    <span class='comment'>/* ... */</span> 
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_a</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_b</span>));
+    <span class='ident'>asm</span> <span class='ident'>volatile</span>(<span class='string'>&quot;mul.lo.u32 %0, %0, %1;&quot;</span> : <span class='string'>&quot;+r&quot;</span>(<span class='ident'>op_c</span>) : <span class='string'>&quot;r&quot;</span>(<span class='ident'>op_d</span>));
+}
+</pre>
+
+<h1 id="dependence-vs.-semi-dependence" class='section-header'><a
+                           href="#dependence-vs.-semi-dependence">Dependence vs. Semi-dependence</a></h1>
 <div style="text-align: center; margin-top: 60px">
-<img src="../graphics/float_vs_int_running_times_indep.png">
+<img src="../graphics/float_dep_float_indep.png">
 </div>
 
 <h1 id="second-scheduling-hypothesis" class='section-header'><a
                            href="#second-scheduling-hypothesis">Second scheduling hypothesis</a></h1>
 <div style="text-align: center; margin-top: 60px">
-<img src="../graphics/scheduling_second.png">
+<img src="../pictures/table_064t_float_5050dep.png" width="70%" height="70%">
 </div>
 
 <h1 id="what&#39;s-next" class='section-header'><a
@@ -153,6 +184,12 @@
 <li>Hardware implementation of specific algorithms in less than 16 cycles</li>
 <li>Simulation of changes using a modified version of gpgpu-sim</li>
 </ul>
+
+<h1 id="questions" class='section-header'><a
+                           href="#questions">Questions</a></h1>
+<div style="text-align: center; margin-top: 60px">
+<img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+</div>
 
     <script type="text/javascript">
         window.playgroundUrl = "";
