@@ -4,7 +4,7 @@ Clément Humbert, Tristan Overney
 
 November 21st, 2014
 
-# Summary
+# 1. Summary
 
 * Goal of the project
 * Cryptography on GPU
@@ -16,7 +16,7 @@ November 21st, 2014
 * What's next 
 * Questions
 
-# Goal of the project
+# 2. Goal of the project
 
 * Increase GPU performance for cryptographic applications.
   * Understanding current limitations of cryptography on GPUs
@@ -39,7 +39,7 @@ November 21st, 2014
 * Nividia's GPU are build around CUDA core.
 * Fermi is their most recent architecture with decent integer multiplication throughput.
 
-# First approach
+# 3. First approach
 
 * First approach was to build hardware components
   * Montgomery multiplier
@@ -49,13 +49,13 @@ November 21st, 2014
 
 There was just too much things we didn’t know about Fermi.
 
-# Microbenchmarking
+# 4. Microbenchmarking
 
 * We need to have a better understanding of the Fermi architecture
 * Fermi is closed and there is little to no precise informations about its microarchitecture
 * We had a Fermi card ready for some live measurement
 
-# Fermi's Streaming Multiprocessor
+# 5. Fermi's Streaming Multiprocessor
 
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
 <img src="../pictures/Fermi.png" width="35%" height="35%">
@@ -63,7 +63,7 @@ There was just too much things we didn’t know about Fermi.
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
 </div>
 
-# CUDA Core
+# 6. CUDA Core
 
 <div style="text-align: center; margin-top: 80px; font-size:14pt">
 <img src="../pictures/CUDACore.png" width="40%" height="40%">
@@ -71,13 +71,13 @@ http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.sv
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
 
-# Blocks, warps, scheduling
+# 7. Blocks, warps, scheduling
 
 * A block of threads runs on a dedicated SM and has a maximum size of 1024
 * A warp consists of 32 threads
 * Each scheduling cycle, a half of two different warps are scheduled
 
-# Benchmarking cuda cores
+# 8. Benchmarking cuda cores
 
 * Are (single-precision) floating-point and integer units really present in each core ?
 * How can the inferior integer operations throughput compared to floating-points be explained ?
@@ -88,14 +88,14 @@ http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instr
 </div>
 * How is the scheduling performed ? 
 
-# Integer vs. Floating-points
+# 9. Integer vs. Floating-points
 
 * Running a million of operations
 * Once for integer multiplication
 * Once for floating point multiplication
 * Expecting lower performances for integer
 
-# Benchmark programs
+# 10. Benchmark programs
 
 ```rust
 for(int i = 0; i < n; i++) {
@@ -115,28 +115,28 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
-# Integer vs. Single-precision floating-points (2)
+# 11. Integer vs. Single-precision floating-points (2)
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_vs_int_running_times.png">
 </div>
 
-# Scheduling, first hypothesis
+# 12. Scheduling, first hypothesis
 
 * 18 stages pipeline
 * Only half of the cores have integer ALUs
 * Need to check the for-loop cost to validate
 
-# For loop cost
+# 13. For loop cost
 <div style="text-align: center; margin-top: 40px">
 <img src="../graphics/for-sizes-superpositions.png" width="50%" height="50%" >
 </div>
 
-# Scheduling, first hypothesis (2)
+# 14. Scheduling, first hypothesis (2)
 <div style="text-align: center; margin-top: 60px">
 <img src="../pictures/table_513t_float_100dep.png" width="70%" height="70%" >
 </div>
 
-# Semi-dependencies benchmark program
+# 15. Semi-dependencies benchmark program
 
 ```rust
 for(int i = 0; i < n; i++) {
@@ -162,7 +162,7 @@ for(int i = 0; i < n; i++) {
 }
 ```
 
-# Dependence vs. Semi-dependence
+# 16. Dependence vs. Semi-dependence
 <div style="text-align: center; margin-top: 60px">
 <img src="../graphics/float_dep_float_indep.png">
 </div>
@@ -172,19 +172,19 @@ for(int i = 0; i < n; i++) {
 <img src="../pictures/table_064t_float_5050dep.png" width="70%" height="70%">
 </div>
 
-# Conclusions
+# 17. Conclusions
 
 * We can gain space by removed/replacing SFUs
 * Only 16 cores have integer multiplication capabilities, so 16 can be replaced
 * New components don't need to be optimized in term of latency (up to 18 cycles)
 
-# What's next
+# 18. What's next
 
 * Understand scheduling mechanism for a mix of operation types
 * Hardware implementation of specific algorithms in less than 18 cycles
 * Simulation of changes using a modified version of gpgpu-sim
 
-# Questions
+# 19. Questions
 
 <div style="text-align: center; margin-top: 60px; font-size:10pt">
 <img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
