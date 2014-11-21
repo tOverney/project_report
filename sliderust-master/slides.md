@@ -24,8 +24,13 @@ November 21st, 2014
 
 # Cryptography on GPU // c'est p-ê trop proche de la slide précédente mais je ne vois pas comment séparer mieux!
 
+<h3> Pro </h3>
+
 * High level of parallelism, ideal for cryptographic algorithms.
-* Principal focus on single-precision floating-point operations.
+
+<h3> Cons</h3>
+
+* Focused on single-precision floating-point operations.
 * Lack of large multipliers for integers.
 
 <br/>
