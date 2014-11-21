@@ -26,8 +26,10 @@ November 21st, 2014
 
 * High level of parallelism, ideal for cryptographic algorithms.
 * But GPU’s principal focus are single-precision floating-point number operations.
-* Nividia’s Fermi is the most recent architecture with decent integer number operation.
 * Lack of large multipliers for integers
+
+
+* Nividia’s Fermi is the most recent architecture with decent integer number operation.
 
 # First approach
 
