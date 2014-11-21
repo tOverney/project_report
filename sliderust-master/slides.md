@@ -36,7 +36,7 @@ November 21st, 2014
 <h2>Why Nvidia & Fermi architecture</h2>
 
 * Nividia's GPU are build around CUDA core.
-* Fermi is their most recent architecture with decent integer operation throughput.
+* Fermi is their most recent architecture with decent integer multiplication throughput.
 
 # First approach
 
