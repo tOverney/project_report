@@ -137,3 +137,8 @@ for(int i = 0; i < n; i++) {
 * Hardware implementation of specific algorithms in less than 16 cycles
 * Simulation of changes using a modified version of gpgpu-sim
 
+# Questions
+
+<div style="text-align: center; margin-top: 60px">
+<img src="../pictures/a_fuken_bear.png" width="70%" height="70%">
+</div>
