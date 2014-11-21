@@ -30,6 +30,7 @@ November 21st, 2014
 
 <br/>
 <h2>Why Nvidia & Fermi architecture</h2>
+
 * Nividia’s Fermi is the most recent architecture with decent integer number operation.
 
 # First approach
