@@ -70,6 +70,12 @@ http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.sv
 http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 </div>
 
+# Blocks, warps, scheduling
+
+* The block size is the number of threads that will run a kernel
+* A warp consists of 32 threads
+* Each scheduling cycle, a half of two different warps are scheduled
+
 # Benchmarking cuda cores
 
 * Are (single-precision) floating-point and integer units really present in each core ?
