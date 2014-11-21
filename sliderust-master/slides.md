@@ -35,16 +35,6 @@ Find a way to increase GPU performance for cryptographic applications.
 
 There was just too much things we didn’t know about Fermi.
 
-# Fermi's Streaming Multiprocessor
-<div style="text-align: center; margin-top: 10px">
-<img src="../pictures/Fermi.png" width="40%" height="40%">
-</div>
-
-# CUDA Core
-<div style="text-align: center; margin-top: 80px">
-<img src="../pictures/CUDACore.png" width="40%" height="40%">
-</div>
-
 # Microbenchmarking
 
 * We need to have a better understanding of the Fermi architecture
@@ -56,6 +46,19 @@ There was just too much things we didn’t know about Fermi.
 * Are floating points and int ALUs really present at a 1:1 ratio ?
 * How could the inferior integer performances be explained if yes ?
 * How is the scheduling performed ? 
+
+# Fermi's Streaming Multiprocessor
+
+<div style="text-align: center; margin-top: 10px">
+<img src="../pictures/Fermi.png" width="40%" height="40%">
+</div>
+
+# CUDA Core
+
+<div style="text-align: center; margin-top: 80px">
+<img src="../pictures/CUDACore.png" width="40%" height="40%">
+</div>
+
 
 # Benchmark programs
 
