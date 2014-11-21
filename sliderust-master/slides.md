@@ -12,8 +12,9 @@ November 21st, 2014
 * Microbenchmarking
 * Fermi
 * Microbenchmarking results
+* Conclusions
 * What's next 
-
+* Questions
 
 # Goal of the project
 
@@ -72,7 +73,7 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 
 # Blocks, warps, scheduling
 
-* The block size is the number of threads that will run a kernel
+* A block of threads runs on a dedicated SM.
 * A warp consists of 32 threads
 * Each scheduling cycle, a half of two different warps are scheduled
 
