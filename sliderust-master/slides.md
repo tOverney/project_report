@@ -85,7 +85,6 @@ http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitect
 <br/>
 http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions__throughput-native-arithmetic-instructions
 </div>
-
 * How is the scheduling performed ? 
 
 # Benchmark programs
