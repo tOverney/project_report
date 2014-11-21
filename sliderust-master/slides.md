@@ -51,7 +51,7 @@ There was just too much things we didn’t know about Fermi.
 # Fermi's Streaming Multiprocessor
 
 <div style="text-align: center; margin-top: 10px; font-size:14pt">
-<img src="../pictures/Fermi.png" width="40%" height="40%">
+<img src="../pictures/Fermi.png" width="35%" height="35%">
 <br/>
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
 </div>
