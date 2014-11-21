@@ -174,7 +174,7 @@ for(int i = 0; i < n; i++) {
 # Conclusions
 
 * We can gain space by removed/replacing SFUs
-* Only 16 cores have integer capabilities, so 16 can be replaced
+* Only 16 cores have integer multiplication capabilities, so 16 can be replaced
 * New components don't need to be optimized in term of latency (up to 18 cycles)
 
 # What's next
