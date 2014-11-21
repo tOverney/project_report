@@ -54,12 +54,13 @@ There was just too much things we didn’t know about Fermi.
 <img src="../pictures/Fermi.png" width="40%" height="40%">
 </div>
 http://en.wikipedia.org/wiki/Fermi_(microarchitecture)#mediaviewer/File:Fermi.svg
+
 # CUDA Core
 
 <div style="text-align: center; margin-top: 80px">
 <img src="../pictures/CUDACore.png" width="40%" height="40%">
 </div>
-
+http://www.nvidia.com/content/pdf/fermi_white_papers/nvidiafermicomputearchitecturewhitepaper.pdf
 
 # Benchmark programs
 
