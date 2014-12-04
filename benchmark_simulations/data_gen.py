@@ -32,17 +32,16 @@ class Benchmark(object):
                                  str(grid_size)], stdout=PIPE, stderr=PIPE)
 
                 (c_out, c_err) = process.communicate()
-	       		 
-                t_times = []        
+                 
+                t_times = []
+
                 # we create the table of tuple from stderr
                 # it's better to iterate on items directly than iterating over
                 # indice and getting elements in list from index
-		print c_err
-		for el in c_err.split(" \n"):
-		    t_times.append(el.split())
-               	 
+                for el in c_err.split(" \n"):
+                    t_times.append(el.split())
                 self.collect_data(t_times, grid_size, n_threads)
-	self.write_data()
+        self.write_data()
                 
     @abc.abstractmethod
     def collect_data(self, data, grid_size, n_threads):
@@ -73,7 +72,7 @@ class TotalTimesBenchmark(Benchmark):
 
         self.times.append("%i,%i,%i" % (min_clk, max_clk, int(max_clk) - int(min_clk)))
        
-	if n_threads >= int(self.config['max_threads']) - 8:
+        if n_threads >= int(self.config['max_threads']) - 8:
             self.data['%s/times_%i_SM.csv' % (self.config['output_dir'], grid_size)] = self.times
             self.times = []
 
