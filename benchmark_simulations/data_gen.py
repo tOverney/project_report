@@ -13,7 +13,7 @@ class Benchmark(object):
     
     def __init__(self, config):
         self.config = config
-        self.data = []
+        self.data = {} 
 
     def run_benchmark(self):
         for grid_size in range(int(self.config['min_sm']), int(self.config['max_sm']) + 1):
@@ -42,6 +42,7 @@ class Benchmark(object):
 		    t_times.append(el.split())
                	 
                 self.collect_data(t_times, grid_size, n_threads)
+	self.write_data()
                 
     @abc.abstractmethod
     def collect_data(self, data, grid_size, n_threads):
@@ -50,12 +51,12 @@ class Benchmark(object):
 
 
     def write_data(self):
-        for filename in self.data.keys:
+        for filename in self.data.keys():
             out_f = open(filename, "w+")
             out_f.write(self.config['headers']+ "\n")
         
             for el in self.data[filename]:
-                out_f.write(el)
+                out_f.write(el + "\n")
             out_f.close()
 
 
@@ -70,9 +71,9 @@ class TotalTimesBenchmark(Benchmark):
         min_clk = min([int(t[0]) for t in data])
         max_clk = max([int(t[1]) for t in data])
 
-        if n_threads != int(self.config['max_threads']):
-            self.times.append("%i,%i,%i" % (min_clk, max_clk, int(max_clk) - int(min_clk)))
-        else:
+        self.times.append("%i,%i,%i" % (min_clk, max_clk, int(max_clk) - int(min_clk)))
+       
+	if n_threads >= int(self.config['max_threads']) - 8:
             self.data['%s/times_%i_SM.csv' % (self.config['output_dir'], grid_size)] = self.times
             self.times = []
 
