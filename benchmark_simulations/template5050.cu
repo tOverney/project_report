@@ -3,6 +3,7 @@
 
 __global__ void loop_mult(DATA_TYPE* a, DATA_TYPE* b, DATA_TYPE* c, DATA_TYPE* d, int64_t* times_bef, int64_t* times_aft, int n) {
     int u = blockDim.x * blockIdx.x + threadIdx.x;
+    int64_t time_aft;
     DATA_TYPE op_a = a[u];
     DATA_TYPE op_b = b[u];
     DATA_TYPE op_c = c[u];
