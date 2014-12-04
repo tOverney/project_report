@@ -1,0 +1,29 @@
+#files configurations
+output_dir:./fp_mul_500-500/results/
+source_file:./fp_mul_500-500/src/fp_mul_500-500.cu
+binary:./fp_mul_500-500/bin/fp_mul_500-500
+template_file:./template.cu
+measurement_target_file:./fp_mul_500-500/target.cu
+
+# template filling parameters
+measurement_tag:MEASUREMENT_TARGET
+data_type_tag:DATA_TYPE
+operand_type_tag:OPERAND_TYPE
+constraint_letter_tag:CONSTRAINT_LETTER
+
+# benchmark running parameters
+# types are: individual, total
+benchmark_type:total
+
+min_threads:8
+max_threads:1024
+
+min_sm:1
+max_sm:1
+
+unroll_factor:1000
+type:float,f32,f
+number_of_operations:1000000
+
+headers:"starting","ending"
+verbose:1
