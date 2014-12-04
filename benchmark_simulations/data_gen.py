@@ -72,7 +72,7 @@ class TotalTimesBenchmark(Benchmark):
 
         self.times.append("%i,%i,%i" % (min_clk, max_clk, int(max_clk) - int(min_clk)))
        
-        if n_threads >= int(self.config['max_threads']) - 8:
+        if n_threads > int(self.config['max_threads']) - 8:
             self.data['%s/times_%i_SM.csv' % (self.config['output_dir'], grid_size)] = self.times
             self.times = []
 
