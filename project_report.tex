@@ -1,0 +1,361 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{caption}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\def \scalingfactor{.8}
+
+\begin{document}
+
+\title{Insert Appropriate Title Here}
+\author{Paolo Ienne, Andrea Miele\and Ewaida Moshen, Cl\'{e}ment Humbert, Tristan Overney}
+\date{\today}
+\maketitle
+
+\section{Goals}
+	The goal of this project was to study and understand GPUs to suggest hardware
+    changes and design an SIMD device with integer capabilities appropriate for
+    integer-heavy applications such as large numbers factorisations.
+
+\section{Problem analysis: factorisation of large integers}
+    \cite{cofact14} describes the applications that must be targeted by this project.
+    The algorithm presented make heavy use of integer multiplications with large 
+    operands. A common way of computing modular exponentiation uses Montgomery 
+    multiplication \cite{montgom90}.
+
+% Change name and create chapter for microbenchmarking
+\section{Methods}
+	To achieve the aforementioned goals, a serie of specially crafted CUDA kernels
+	were used. These usually contain large batches of instructions that were 
+	timed with the assistance of the \texttt{clock64()} function offered by the CUDA API.
+
+	The benchmark programs have been ran on a machine equipped with an Nvidia
+    GeForce GTX 580 GPU.
+
+\section{Terminology}
+    Before diving into the experiments and their results here's a quick-start
+    guide to Nvidia's Fermi architecture and its vocabulary:
+
+    \subsection{Streaming Multiprocessors}
+    The largest building block inside the Fermi architecture is the 
+    \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
+    ~\pageref{fig:SM}) abbreviated SM in this report. Fermi cards are equipped
+    with 16 of these SMs.
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.75\linewidth]{pictures/Fermi}
+        \captionsetup{justification=centering}
+        \caption{Fermi's streaming multiprocessor schematic representation.}
+        \label{fig:SM}
+    \end{figure}
+
+    Each SM is composed of the following computation blocks:
+    \begin{itemize}
+        \item 32 CUDA cores in two groups of 16,
+        \item 16 load/store units (LD/ST on the figure)
+        \item 4 Special Functions Units (SFUs) dedicated to more complex
+              arithmetic functions such as sines and logarithms.
+    \end{itemize}
+    
+    As the SFU is dedicated to floating-point operations it's already an area
+    that can be reused for integer computation components, thus it's not part
+    of the following research. The focus of the experiments are the CUDA cores.
+
+    \subsection{CUDA Cores}
+    Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
+    according to Nvidia.
+    
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.5\linewidth]{pictures/CUDACore}
+        \captionsetup{justification=centering}
+        \caption{Schematic representation of Nvidia's CUDA Core.}
+        \label{fig:CUDACore}
+    \end{figure}
+    
+    From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be
+    adjusted to 2x16 integers ALUs and 2x16 simple-precision floating-point
+    ALUs.
+
+    \subsection{Basics of Fermi's scheduling}
+        \subsubsection{Grids and blocks} 
+        A cuda kernel (that is: a section of code that will run on the GPU) is
+        launched with two parameters: a grid size and a block size. The grid 
+        size is used to determine the number of SM on which the code will run.
+        The block size determines how many threads will run the code inside each
+        SM. As we're interested in the properties of single SMs or even, single
+        cores, every benchmarking experiment was done using a grid size of one.
+
+        \subsubsection{Warps}
+        The second important scheduling unit is the warp. A warp consists
+        of 32 threads. Each scheduling cycle, the scheduler selects two
+        warps, for each of these it schedules 16 threads (making it 32
+        threads scheduled, coming from two warps).
+
+\section{Pipeline properties}
+	This section contains the results obtained through the previously described
+	methods using large batches of integer multiplications.
+
+	\subsection{Benchmark running times against number of threads}
+	\label{par:pipeline_exp}
+	\subsubsection{Description of the experiment}
+	The first experiment aims at outlining the relation between the running
+    times of the benchmark program and the number of threads running parallely in
+    a single block (the threads reside on one SM).
+	\subsubsection{Expectations}
+    The running times are expected to be slightly higher for the integer
+    multiplications, as GPUs are optimized for floting point computation
+    but to deteriorate in a similar fashion (begin to deteriorate
+    at the same point, at the same rate) due to each core being equipped with
+    integer and single-precision floating-point ALUs.
+    
+	\subsubsection{Results and analysis}
+    \begin{figure}[H]
+    	\centering
+		\vspace{-20pt}
+	    \includegraphics[width=\scalingfactor\linewidth]{"graphics/float_vs_int_running_times"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+        \caption{Running times of benchmark (in cycles) against number of threads.}
+    \end{figure}
+	
+    The results are against the expectations as it's easy to see the integer
+    multiplication times starting to grow at 257 threads in the block against
+    513 for the simple-precision floating-point multiplications.
+    
+    %not at the right place, there should be a section about FP benchmark.
+    As the running time is constant up to 512 threads running in parallel and that we have 32 cores
+    available, the hypothesis has been formulated that the pipeline depth for the single-precision 
+    floating-point multiplication is 16 ($512/32 = 16$). Which seems to correlate with the running
+    times of the single-precision floating-points multiplication. 
+    
+    Figure~\ref{fig:fp_prediction_512}
+    represents the hypothesis made about the pipeline depth when 512 threads are running, $C_1$ to
+    $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the
+    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the $k$-eme instruction of the thread number $j$. 
+        \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{64,0}$ & $t_{65,0}$ & ... & $t_{79,0}$ & $t_{96, 0}$ & ... & $t_{111, 0}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   16 & $t_{528,0}$ & $t_{529,0}$ & ... & $t_{543,0}$ & $t_{560,0}$ & ... & $t_{575, 0}$ \\ \hline
+    	   17 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 512 threads with floating point number multiplication.}
+  	\label{fig:fp_prediction_512}
+   \end{figure}
+   
+    Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 256
+    threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
+    has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first
+    group core is provided in integer multiplication but the second. $t_{j,k}$ is the $k$-eme instruction of the thread number
+    $j$.
+   \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & - & ... & - \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & - & ... & - \\ \hline
+    	   3 & $t_{32,0}$ & $t_{33,0}$ & ... & $t_{47,0}$ & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   18 & $t_{272,0}$ & $t_{273,0}$ & ... & $t_{287,0}$ & - & ... & - \\ \hline
+    	   19 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 256 threads with integer number multiplication.}
+  	\label{fig:int_prediction_256}
+   \end{figure}
+
+	% better phrasing needed :)
+    To understand these deterioration points the next experiment has been designed.
+
+\section{Understanding pipeline length and performance deterioration}
+    \subsection{The experiment}
+    With the results of \ref{par:pipeline_exp} in mind, it's clear that the pipelines depth 
+    must be 16. The objective of the following experiment is to determine the cost of
+    the loop used in the benchmarks to adjust the running times found and see if they match with
+    the hypothesis about pipeline length and scheduling. 
+	\subsubsection{Expectations}
+	As seen in \ref{par:pipeline_exp} the cost of simple-precision floating-point
+    operations goes up at 512 threads. This would imply that every pipeline of
+    the SM is perfectly filled with 512 threads. Dividing 512 threads by
+    the 32 cores gives a pipeline length of 16. In addition, the cost increase
+    is suspected to be 1/8 of the base cost as the scheduling is expected to be
+    something like described in the following schematic:
+    
+    \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{64,0}$ & $t_{65,0}$ & ... & $t_{79,0}$ & $t_{96, 0}$ & ... & $t_{111, 0}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   18 & $t_{528,0}$ & $t_{529,0}$ & ... & $t_{543,0}$ & $t_{560,0}$ & ... & $t_{575, 0}$ \\ \hline
+    	   19 & $t_{576,0}$ & - & ... & - & - & ... & - \\ \hline
+    	   20 & - & - & ... & - & - & ... & - \\ \hline
+    	   21 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32,1}$ & ... & $t_{47,1}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 513 threads with floating point number multiplication.}
+  	\label{fig:fp_prediction_513}
+   \end{figure}
+
+    The 1/8 can be derived from the following formula
+    \[ \cfrac{t_{\text{513threads}} - t_{\text{512threads}}}{t_{\text{512threads}}} \text{  .}\]
+    The latency of an instruction is equal to the pipeline length, plus 1/16 of
+    it for every additional warp after the $16^{\text{th}}$. So the latency l of an 
+    operation is $L + \text{max}(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
+    running time of a benchmark, this latency must be added as a constant to
+    represent the time the last instruction takes to get through the pipeline.
+
+    The expansion of the previous formula gives
+    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \text{  .}\]
+    Which, with numerical values and simplifications is
+    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\text{  .}\] 
+
+    Thus, the outcome expected is that once the loop cost is removed from the 
+    times obtained in \ref{par:pipeline_exp} the remaining time is 16 millions
+    which is 16 cycles per operation, fitting the 16-stages pipeline hypothesis.
+    The expected difference in running time after adjustments is 2 millions cycles,
+    1/8 of 16 millions.
+
+	\subsubsection{Results and analysis}
+    \begin{figure}[H]
+		\centering
+		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/for-sizes-superpositions"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+		\caption{Running a million operations broken down in 10 and 1000 loop iterations.}
+        \label{fig:for-cost}
+	\end{figure}
+    
+    Figure ~\ref{fig:for-cost} suggests that only a insignificant amount of time is spent by the loop
+    iterations' instructions. The next possible explanation would be data transfer overhead caused
+    by compiler shenanigans.
+
+\section{Mixing single-precision floating-points and integer multiplication}
+	\subsection{The experiment}
+	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
+    integer multiplication able to run parallely on an SM was only half the number of 
+    single-precision floating-point multiplication. Leading to the conclusion that only one of
+    the two 16 cores group of an SM was equipped with integer. The following experiments issue 
+    integer multiplication in parallel of floating-point operations to confirm this hypothesis.
+	\subsection{Benchmark running times, 1 single-precision floating-points for 1 integer multiplication}
+	If indeed only 1 out of 2 cores group can run integer multiplication then
+    adding the same amount of floating-point multiplications as there were integer
+    multiplications should not increase the total time spent executing the benchmark 
+    program as the single-precision floating-point multiplication can
+    be ran on the other core group (the one that does not possess integer multiplication).
+	
+	One million multiplication of each kind has been ran on 1 to 1024 threads to
+    see if the results were comparable to the graph were there was only integer multiplication.
+	%TODO Update that hideous graph!
+	\begin{figure}[H]
+		\centering
+		\vspace{-20pt}
+    			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+		\caption{Integer/Floating point multiplication ratio: 1.}
+	\end{figure}
+	\pagebreak
+
+	\subsection{Benchmark running times with mixed single-precision floating-point and integer multiplications}
+	\begin{figure}[H]
+		\centering
+		\vspace{-20pt}
+        \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_mixed"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+        \caption{Running times of benchmarks with a mix of single-precision floating-points and integers multiplications.}
+    \end{figure}
+
+    \subsection{Results}
+    The running times appear to be bound by those of the integer multiplication but is no higher than
+    when only integer multiplications are ran, this confirms the hypothesis that only 16 of the 32
+    CUDA core are equipped with integer ALUs. 
+
+\section{Results}
+    \subsection{Pipeline structure}
+    As seen during the experiments, the CUDA core's pipeline appears to be a
+    16 steps pipeline. The fact that integer multiplication and 
+    simple-precision floating-point multiplication both take the same amount
+    of time (on a machine that's supposed to be a floating-point calculation
+    optimized device) until the pipelines are filled suggests a simple,
+    no-dependency-check, scheduler that fires up new instructions every 16 cycles.
+
+    It also appears rather clearly that, while 32 cores per SM are advertised by
+    Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer
+    operations to be scheduled every 18 cycles.
+    
+    \subsection{Prospects}
+    From the previous constatations the following ideas are expected to drastically
+    improve the integer computation performances while maintaining a stable (if not
+    lower) cost in transistors:
+    \begin{itemize}
+        \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
+        \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
+    \end{itemize}
+\section{Additionnal graphics and tables}
+	\subsection{Integer multiplication: 1024 threads starting times}
+    \begin{figure}[H]
+    		\centering
+		\vspace{-20pt}
+	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
+	    	\vspace{-15pt}
+	    	\captionsetup{justification=centering}    
+	    	\caption{Order in which thread batches are started.}
+    \end{figure}
+
+    \subsection{Graphics intersteps data}
+    The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
+    \begin{itemize} 
+        \item the cores' pipelines, if it represents the delay between dependencies checks;
+        \item the scheduling mechanism, if it represents the delaying of threads operations in favor of the launch of other threads.
+    \end{itemize}
+    \centering
+    \include{intersteps_times_1_SM_int}
+    \include{intersteps_times_1_SM_float}
+    \pagebreak
+    
+
+As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
+\begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
+           4 & $t_{16,1}$ & $t_{17,1}$ & ... & $t_{31,1}$ & $t_{48, 1}$ & ... & $t_{63, 1}$ \\ \hline
+    	   5 & - & - & ... & - & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   18 & - & - & ... & - & - & ... & - \\ \hline
+    	   19 & $t_{0,2}$ & $t_{1,2}$ & ... & $t_{15,2}$ & $t_{32,2}$ & ... & $t_{47,2}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 64 threads with interleaved dependent floating point number multiplication.}
+  	\label{fig:fp_prediction_64_halfdep}
+   \end{figure}
+
+
+\end{document}
