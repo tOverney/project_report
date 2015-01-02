@@ -88,7 +88,7 @@
     ALUs.
 
     \section{Basics of Fermi's scheduling}
-        \subsubsection{Grids and blocks} 
+        \subsection{Grids and blocks} 
         A cuda kernel (that is: a section of code that will run on the GPU) is
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
@@ -96,7 +96,7 @@
         SM. As we're interested in the properties of single SMs or even, single
         cores, every benchmarking experiment was done using a grid size of one.
 
-        \subsubsection{Warps}
+        \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
