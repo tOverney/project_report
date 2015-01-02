@@ -102,7 +102,7 @@
         warps, for each of these it schedules 16 threads (making it 32
         threads scheduled, coming from two warps).
 
-\chapter{Benchmarking		}
+\chapter{Benchmarking}
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
@@ -319,7 +319,7 @@
         \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
     \end{itemize}
-\section{Additionnal graphics and tables}
+\section{Additional graphics and tables}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[H]
     		\centering
@@ -331,9 +331,13 @@
     \end{figure}
    %TODO Fill the skeleton
 \chapter{Beyond the current architecture}
+    Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
    \section{Proposed enhancement}
-   After all those experimentations, the end goal was still to propose a better 
+   The most blatant upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
+   There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
    \subsection{Plan A}
+    Add a 32-bit multiplier to each cores who doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
+    The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
    \subsection{Plan B}
    \section{Estimated performance increase}
    \section{Estimated cost variance}
