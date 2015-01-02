@@ -22,18 +22,20 @@
 \date{\today}
 \maketitle
 
+\nocite{*}
+
 \setcounter{tocdepth}{1}
 \tableofcontents
 \listoffigures
 
 \chapter{Introduction}
 
-    Due to their SIMD nature, GPU have been used in different scientific field to perform
+    Due to their SIMD nature, GPUs have been used in different scientific fields to perform
     non-graphical computations for a while. They're used for particle and molecular dynamic 
-    modelisation, astrophysic and fluid mechanic modeling.
+    modeling, astrophysic and fluid mechanic modeling.
     More recently they've been used for cryptographic applications and in particular
     to factorize large numbers in an attempt to compromise RSA encryption \cite{cofact14}.
-    Cryptography related applications make heavy use of very large integers operations.
+    Cryptography-related applications make heavy use of very large integer operations.
     Here's an algorithm as example from \cite{cofact14}:
     \begin{algorithm}
     \caption{Large operands multiplication}\label{mulalgo}
