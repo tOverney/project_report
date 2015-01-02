@@ -368,15 +368,23 @@
    The most blatant upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
    There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
    \subsection{Plan A}
-    Add a 32-bit multiplier to each cores who doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
+    In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
     The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
+    The advantage of this plan is that there is far less changes to the existing cores than plan B.
    \subsection{Plan B}
+   In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
+   The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for such operand type would be removed.
+   And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
+   The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
    \section{Estimated performance increase}
    \section{Estimated cost variance}
    \subsection{Plan A}
    \subsection{Plan B}
    
-\chapter{Conclusion}   
+\chapter{Conclusion} 
+    This project was a mess, it's about everything there is to say!
+    
+    I'd like to thank Cl\'{e}ment Humbert for all the hard-work he put in this project and made it something else than just a huge "I don't care about that, leave me alone"  
    
    
   \appendix 
