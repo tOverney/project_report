@@ -4,6 +4,11 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{caption}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \usepackage{mathtools}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -21,10 +26,41 @@
 \listoffigures
 
 \chapter{Introduction}
+
+    Due to their SIMD nature, GPU have been used in different scientific field to perform
+    non-graphical computations for a while. They're used for particle and molecular dynamic 
+    modelisation, astrophysic and fluid mechanic modeling.
+    More recently they've been used for cryptographic applications and in particular
+    to factorize large numbers in an attempt to compromise RSA encryption \cite{cofact14}.
+    Cryptography related applications make heavy use of very large integers operations.
+    Here's an algorithm as example from \cite{cofact14}:
+    \begin{algorithm}
+    \caption{Large operands multiplication}\label{mulalgo}
+    \begin{algorithmic}[1]
+        \Require{Integers x and $Y=\sum_{i=0}^{n-1}Y_ir^i$ such that $0\leq x$, $Y_i<r$ for $0\leq i<n$.}
+        \Ensure{$Z=x\cdot Y = \sum_{i=0}^nZ_ir^i$}
+        \State mul.lo($Z_0$, x, $Y_0$)
+        \State mul.hi($Z_1$, x, $Y_0$)
+        \State mad.lo.cc($Z_1$, x, $Y_1$, $Z_1$)
+        \State mul.hi($Z_2$, x, $Y_1$)
+        \For{$i=2$ to $n-2$}
+            \State madc.lo.cc($Z_i$, x, $Y_i$, $Z_i$)
+            \State mul.hi($Z_{i+1}$, x, $Y_i$)
+        \EndFor
+        \State madc.lo.cc($Z_{n-1}$, x, $Y_{n-1}$, $Z_{n-1}$)
+        \State madc.hi($Z_n$, x, $Y_{n-1}$, 0)
+        \State \textbf{return} $Z (=\sum_{i=0}^nZ_ir^i)$
+    \end{algorithmic}
+    \end{algorithm}
+
+    Due to the nature of asymetric cryptography, these applications are bound by
+    integer computing capacity which is not the focus of GPU. GPUs are designed
+    around floating-point operations.
+
 \section{Goals}
-    The goal of this project was to study and understand GPUs to suggest hardware
-    changes and design an SIMD device with integer capabilities appropriate for
-    integer-heavy applications such as large numbers factorisations.
+    The aim of this project is to study and identify the limitations of GPUs
+    when used for cryptography and large integers computation in order to suggest
+    hardware changes with integer capabilities appropriate for integer-heavy applications.
 
 \section{Problem analysis: factorisation of large integers}
     \cite{cofact14} describes the applications that must be targeted by this project.
