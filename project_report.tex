@@ -22,6 +22,7 @@
 \date{\today}
 \maketitle
 
+\setcounter{tocdepth}{1}
 \tableofcontents
 \listoffigures
 
@@ -77,11 +78,11 @@
 	The benchmark programs have been ran on a machine equipped with an Nvidia
     GeForce GTX 580 GPU.
 
-\section{Terminology}
+\chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
     guide to Nvidia's Fermi architecture and its vocabulary:
-
-    \subsection{Streaming Multiprocessors}
+    %TODO add a picture of the full chip here? Or in the part where the cost increase is computed?
+    \section{Streaming Multiprocessors}
     The largest building block inside the Fermi architecture is the 
     \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
     ~\pageref{fig:SM}) abbreviated SM in this report. The GTX580 card is equipped
@@ -106,7 +107,7 @@
     that can be reused for integer computation components, thus it's not part
     of the following research. The focus of the experiments are the CUDA cores.
 
-    \subsection{CUDA Cores}
+    \section{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
     according to Nvidia.
     
@@ -122,8 +123,8 @@
     adjusted to 2x16 integers ALUs and 2x16 simple-precision floating-point
     ALUs.
 
-    \subsection{Basics of Fermi's scheduling}
-        \subsubsection{Grids and blocks} 
+    \section{Basics of Fermi's scheduling}
+        \subsection{Grids and blocks} 
         A cuda kernel (that is: a section of code that will run on the GPU) is
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
@@ -131,12 +132,13 @@
         SM. As we're interested in the properties of single SMs or even, single
         cores, every benchmarking experiment was done using a grid size of one.
 
-        \subsubsection{Warps}
+        \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
         threads scheduled, coming from two warps).
 
+\chapter{Benchmarking		}
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
@@ -363,13 +365,31 @@
 	    	\captionsetup{justification=centering}    
 	    	\caption{Order in which thread batches are started.}
     \end{figure}
-
-    \subsection{Graphics intersteps data}
+   %TODO Fill the skeleton
+\chapter{Beyond the current architecture}
+   \section{Proposed enhancement}
+   After all those experimentations, the end goal was still to propose a better 
+   \subsection{Plan A}
+   \subsection{Plan B}
+   \section{Estimated performance increase}
+   \section{Estimated cost variance}
+   \subsection{Plan A}
+   \subsection{Plan B}
+   
+\chapter{Conclusion}   
+   
+   
+  \appendix 
+   
+   %TODO put those stuff elsewhere!
+\chapter{stuff that needs to be elsewhere}
+    \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
     \begin{itemize} 
         \item the cores' pipelines, if it represents the delay between dependencies checks;
         \item the scheduling mechanism, if it represents the delaying of threads operations in favor of the launch of other threads.
     \end{itemize}
+    
     \centering
     \include{intersteps_times_1_SM_int}
     \include{intersteps_times_1_SM_float}
