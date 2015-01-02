@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
@@ -17,6 +17,10 @@
 \date{\today}
 \maketitle
 
+\tableofcontents
+\listoffigures
+
+\chapter{Introduction}
 \section{Goals}
 	The goal of this project was to study and understand GPUs to suggest hardware
     changes and design an SIMD device with integer capabilities appropriate for
@@ -356,6 +360,9 @@ As there is no dependency between the even and odd instructions and there isn't 
   	\caption{Planned running scheme for 64 threads with interleaved dependent floating point number multiplication.}
   	\label{fig:fp_prediction_64_halfdep}
    \end{figure}
+   
+   \bibliography{project_report}{}
+   \bibliographystyle{plain}
 
 
 \end{document}
