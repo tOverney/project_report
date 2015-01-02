@@ -63,12 +63,6 @@
     when used for cryptography and large integers computation in order to suggest
     hardware changes with integer capabilities appropriate for integer-heavy applications.
 
-\section{Problem analysis: factorisation of large integers}
-    \cite{cofact14} describes the applications that must be targeted by this project.
-    The algorithm presented make heavy use of integer multiplications with large 
-    operands. A common way of computing modular exponentiation uses Montgomery 
-    multiplication \cite{montgom90}.
-
 % Change name and create chapter for microbenchmarking
 \section{Methods}
 	To achieve the aforementioned goals, a serie of specially crafted CUDA kernels
