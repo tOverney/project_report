@@ -187,17 +187,17 @@
     \end{figure}
 	
     The results are against the expectations as it's easy to see the integer
-    multiplication times starting to grow at 257 threads in the block against
-    513 for the simple-precision floating-point multiplications.
+    multiplication times starting to grow at 289 threads in the block against
+    577 for the simple-precision floating-point multiplications.
     
     %not at the right place, there should be a section about FP benchmark.
-    As the running time is constant up to 512 threads running in parallel and that we have 32 cores
+    As the running time is constant up to 576 threads running in parallel and that we have 32 cores
     available, the hypothesis has been formulated that the pipeline depth for the single-precision 
-    floating-point multiplication is 16 ($512/32 = 16$). Which seems to correlate with the running
-    times of the single-precision floating-points multiplication. 
+    floating-point multiplication is 18 ($576/32 = 18$). Which seems to correlate with the running
+    times of the integers multiplication. 
     
     Figure~\ref{fig:fp_prediction_512}
-    represents the hypothesis made about the pipeline depth when 512 threads are running, $C_1$ to
+    represents the hypothesis made about the pipeline depth when 576 threads are running, $C_1$ to
     $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the
     first core group and 17 to 32 is the second one.) $t_{j,k}$ is the $k$-eme instruction of the thread number $j$. 
         \begin{figure}[H]
@@ -214,11 +214,11 @@
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 512 threads with floating point number multiplication.}
+  	\caption{Planned running scheme for 576 threads with floating point number multiplication.}
   	\label{fig:fp_prediction_512}
    \end{figure}
    
-    Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 256
+    Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 288
     threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
     has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first
     group core is provided in integer multiplication but the second. $t_{j,k}$ is the $k$-eme instruction of the thread number
@@ -237,25 +237,24 @@
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 256 threads with integer number multiplication.}
+  	\caption{Planned running scheme for 288 threads with integer number multiplication.}
   	\label{fig:int_prediction_256}
    \end{figure}
 
-	% better phrasing needed :)
     To understand these deterioration points the next experiment has been designed.
 
 \section{Understanding pipeline length and performance deterioration}
     \subsection{The experiment}
     With the results of \ref{par:pipeline_exp} in mind, it's clear that the pipelines depth 
-    must be 16. The objective of the following experiment is to determine the cost of
+    must be 18. The objective of the following experiment is to determine the cost of
     the loop used in the benchmarks to adjust the running times found and see if they match with
     the hypothesis about pipeline length and scheduling. 
 	\subsubsection{Expectations}
 	As seen in \ref{par:pipeline_exp} the cost of simple-precision floating-point
-    operations goes up at 512 threads. This would imply that every pipeline of
-    the SM is perfectly filled with 512 threads. Dividing 512 threads by
-    the 32 cores gives a pipeline length of 16. In addition, the cost increase
-    is suspected to be 1/8 of the base cost as the scheduling is expected to be
+    operations goes up at 576 threads. This would imply that every pipeline of
+    the SM is perfectly filled with 576 threads. Dividing 576 threads by
+    the 32 cores gives a pipeline length of 18. In addition, the cost increase
+    is suspected to be 1/9 of the base cost as the scheduling is expected to be
     something like described in the following schematic:
     
     \begin{figure}[H]
@@ -274,28 +273,28 @@
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 513 threads with floating point number multiplication.}
+  	\caption{Planned running scheme for 577 threads with floating point number multiplication.}
   	\label{fig:fp_prediction_513}
    \end{figure}
 
-    The 1/8 can be derived from the following formula
-    \[ \cfrac{t_{\text{513threads}} - t_{\text{512threads}}}{t_{\text{512threads}}} \text{  .}\]
-    The latency of an instruction is equal to the pipeline length, plus 1/16 of
-    it for every additional warp after the $16^{\text{th}}$. So the latency l of an 
-    operation is $L + \text{max}(0, \ceil{\cfrac{N}{32} -16})$ and to get the total
+    The 1/9 can be derived from the following formula
+    \[ \cfrac{t_{\text{577threads}} - t_{\text{576threads}}}{t_{\text{576threads}}} \text{  .}\]
+    The latency of an instruction is equal to the pipeline length, plus 1/18 of
+    it for every additional warp after the $18^{\text{th}}$. So the latency l of an 
+    operation is $L + \text{max}(0, \ceil{\cfrac{N}{32} -18})$ and to get the total
     running time of a benchmark, this latency must be added as a constant to
     represent the time the last instruction takes to get through the pipeline.
 
     The expansion of the previous formula gives
-    \[ \cfrac{(16\cdot l_{512} + l_{513} + l_{513}) - (16\cdot l_{512} + l_{512})}{16\cdot l_{512} + l_{512}} \text{  .}\]
+    \[ \cfrac{(18\cdot l_{576} + l_{577} + l_{577}) - (18\cdot l_{576} + l_{576})}{18\cdot l_{576} + l_{576}} \text{  .}\]
     Which, with numerical values and simplifications is
-    \[ \cfrac{(16\cdot 17 + 2\cdot 17) - (16^2 + 16)}{16^2 + 16} = \cfrac{1}{8}\text{  .}\] 
+    \[ \cfrac{(18\cdot 19 + 2\cdot 19) - (18^2 + 18)}{18^2 + 18} = \cfrac{1}{9}\text{  .}\] 
 
     Thus, the outcome expected is that once the loop cost is removed from the 
-    times obtained in \ref{par:pipeline_exp} the remaining time is 16 millions
-    which is 16 cycles per operation, fitting the 16-stages pipeline hypothesis.
+    times obtained in \ref{par:pipeline_exp} the remaining time is 18 millions
+    which is 18 cycles per operation, fitting the 18-stages pipeline hypothesis.
     The expected difference in running time after adjustments is 2 millions cycles,
-    1/8 of 16 millions.
+    1/9 of 18 millions.
 
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
@@ -356,15 +355,15 @@
 
 \section{Results}
     \subsection{Pipeline structure}
-    As seen during the experiments, the CUDA core's pipeline appears to be a
-    16 steps pipeline. The fact that integer multiplication and 
+    As seen during the experiments, the CUDA core's pipeline appears to be an
+    18 steps pipeline. The fact that integer multiplication and 
     simple-precision floating-point multiplication both take the same amount
     of time (on a machine that's supposed to be a floating-point calculation
     optimized device) until the pipelines are filled suggests a simple,
-    no-dependency-check, scheduler that fires up new instructions every 16 cycles.
+    no-dependency-check, scheduler that fires up new instructions every 18 cycles.
 
     It also appears rather clearly that, while 32 cores per SM are advertised by
-    Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer
+    Nvidia, only 16 are equipped with integer ALUs; allowing only 18 integer
     operations to be scheduled every 18 cycles.
     
     \subsection{Prospects}
@@ -434,6 +433,51 @@
    And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
    The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
    \section{Estimated performance increase}
+    To estimate the increase in integers multiplications capabilities, gpgpusim
+    is used. The base configuration is the one for GTX480 shipped with gpgpusim.
+    With the default configuration, gpgpusim simulate integer multiplication as
+    any other operation (with two pipelines) but with a slower initiation rate.
+    The first step to measure the performance is to simulate a one-pipeline
+    multiplication with the following configuration changes:
+    \begin{figure}[H]
+    \centering
+       \begin{tabular}{ | l | l | }
+            \hline
+    	    Option & Value \\ \hline
+    	    pipeline\_widths & 1,1,1,1,1,1,1 \\
+            num\_sp\_units & 1 \\
+            ptx\_opcode\_initiation\_int & 1,2,1,1,8 \\
+            operand\_collector\_num\_in\_ports\_sp & 1 \\
+            operand\_collector\_num\_out\_ports\_sp & 1 \\ \hline
+
+  	    \end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Single multiplier simulation configuration.}
+  	\label{tab:1stconfig}
+    \end{figure}
+
+    To simulate the changes, the following configuration is used (Table ~\ref{tab:2ndconfig}
+    illustrates the changes from ~\ref{tab:1stconfig}):
+    \begin{figure}[H]
+    \centering
+        \begin{tabular}{ | l | l | }
+    	    \hline
+    	    Option & Value \\ \hline
+    	    pipeline\_widths & 2,1,1,2,1,1,2 \\
+            num\_sp\_units & 2 \\
+            ptx\_opcode\_initiation\_int & 1,2,2,1,8 \\
+            operand\_collector\_num\_in\_ports\_sp & 2 \\
+            operand\_collector\_num\_out\_ports\_sp & 2 \\ \hline
+  	    \end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Two multipliers simulation configuration..}
+  	\label{tab:2ndconfig}
+    \end{figure}
+
+    Launching an integer multiplication benchmark on both configurations yields the running
+    times illustrated in ~\ref{graph_time_improvement}. 
+    % TODO insert improvement graph
+
    \section{Estimated cost variance}
    In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the 65nm library GPSVT.
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in 65nm)}.\]
