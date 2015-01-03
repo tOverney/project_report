@@ -5,6 +5,7 @@
 \usepackage{amsthm}
 \usepackage{caption}
 \usepackage{algorithm}
+\usepackage{hyperref}
 \usepackage[noend]{algpseudocode}
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
@@ -480,10 +481,28 @@
    In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the 65nm library GPSVT.
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in 65nm)}.\]
    \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in 65nm)}.\]
+   The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} has been used in addition to the known total chip die size which is $520 mm^2$\cite{G5xxwiki}.
+   \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.7\linewidth]{pictures/FermiChip}
+        \captionsetup{justification=centering}
+        \caption{Picture of the full GTX580's chip.}
+        \label{fig:fermiChip}
+    \end{figure}
+   
    \subsection{Plan A}
    \subsection{Plan B}
    
-\chapter{Conclusion} 
+\chapter{Conclusion}
+    Nvidia's policy to keep everything closed source and secret made the original goal of the project impossible to attain and forced the realization of micro-benchmarking in order to find more infos on the architecture we've chosen to base our work on. We went from an initial plan of designing our own many-cores crypto processor to trying to reverse-engineer the work of a full team of engineers.
+    
+
+
+
+
+
+
+
     This project was a mess, it's about everything there is to say!
     
     I'd like to thank Cl\'{e}ment Humbert for all the hard-work he put in this project and made it something else than just a huge "I don't care about that, leave me alone"  
