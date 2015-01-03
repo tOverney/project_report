@@ -73,10 +73,19 @@
     
     To do so different ways of implementing Montgomery multipliers were
     explored:
-    % INSERT MONTOMERY SHIT HERE
+    %TODO INSERT MONTGOMERY SHIT HERE
 
-    And the impact of the new opcodes were to be measured with the assistance of
-    GPGPU-SIM\cite{gpgpusim09} a Fermi architecture simulator.
+    The impact of the new opcodes were to be measured with the assistance of
+    GPGPU-SIM\cite{gpgpusim09} a Fermi architecture simulator. It was determined
+    that new opcodes can be added to gpgpu-sim and included in an instruction group
+    to modify its latency (an unused operation could have been chosen to set the new
+    instruction's latency).
+
+    To determine the speed/size of the new components the original cores have to
+    be studied as not much is known from nVidia sources. In order to understand 
+    the cores and be able to suggest meaningful changes, a serie of microbenchmarking 
+    experiments had to be done. 
+
 
 \chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
