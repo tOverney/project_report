@@ -19,7 +19,7 @@
 \begin{document}
 
 \title{Insert Appropriate Title Here}
-\author{Cl\'{e}ment Humbert, Tristan Overney\and Paolo Ienne, Andrea Miele, Ewaida Moshen (Supervisors)}
+\author{Cl\'{e}ment Humbert, Tristan Overney\and Paolo Ienne, Andrea Miele, Ewaida Mohsen (Supervisors)}
 \date{\today}
 \maketitle
 
@@ -72,10 +72,39 @@
     operations (in the form of assembly opcodes) to the developers with the 
     shortest latency possible. 
     
-    To do so different ways of implementing Montgomery multipliers were
-    explored:
+    An algorithm that is constantly used in cryptography is the Montgomery multiplication,
+    a special kind of modular multplication. Implementing such an operation in hardware can
+    be done in many ways, one of the most efficient is the rolled implementation described
+    by the algorithm \ref{montgomery}. Where operands $X$ and $Y$ would have been prepared
+    by software for the multiplication And that can be unrolled for the hardware implementation
+    in order to allow for pipelining.
     
-    %TODO INSERT MONTGOMERY SHIT HERE
+    \begin{algorithm}
+    \caption{Hardware Montgomery multiplier\cite{montgomeryHard}}\label{montgomery}
+    \begin{algorithmic}[1]
+        \Require{Integers $X$, $Y$ and $M$ with $0\leq X$, $Y < M$.}
+        \Ensure{$P=(X * Y (2^n)^{-1})\text{ mod }M$.}
+        \Statex $n$ is the number of bits in $X$.
+        \Statex $x_i$ is the $i^{th}$ bit of $X$.
+        \Statex $s_0$ is the least significant bit of $S$. 		
+        \State $S := 0$; $C := 0$; \Comment $S$ is the Sum and $C$ is the carry
+        \For{$i=0$; $i < n$; $i++$}
+            \State $S,C := S + C + x_i * Y$; \Comment $S,C := ...$ is a carry-save adder assignation
+            \State $S,C := S + C + s_0 * M$;
+            \State $S := S$ div $2$; $C := C$ div $2$;  
+        \EndFor
+        \State $P := S + C$;
+        \If{ $P \geq M$}
+            \State $P := P - M$;
+        \EndIf
+        \State \textbf{return} $P$;
+    \end{algorithmic}
+    \end{algorithm}
+    
+    Other ways to do the cryptography enhancement would be to have part of such
+    an algorithm implemented in hardware and the rest in software.
+    Such as multiplications of numbers larger than 32bits.
+    
 
     The impact of the new opcodes were to be measured with the assistance of
     GPGPU-SIM\cite{gpgpusim09} a Fermi architecture simulator. It was determined
