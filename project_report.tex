@@ -366,13 +366,46 @@
     Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
    \section{Proposed enhancement}
    The most blatant upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
+   \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | c | c | }
+    	    \hline
+    	    $1^{st}$ CUDA core group & $2^{nd}$ CUDA core group \\ \hline
+    	   float unit and 32-bit multiplier & float unit \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Current CUDA core configuration.}
+  	\label{fig:current_cores}
+   \end{figure}
    There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
    \subsection{Plan A}
     In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
+    \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | c | c | }
+    	    \hline
+    	    $1^{st}$ CUDA core group & $2^{nd}$ CUDA core group \\ \hline
+    	   float unit and 32-bit multiplier & float unit and 32-bit multiplier \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{First plan CUDA core new configuration.}
+  	\label{fig:planA_cores}
+   \end{figure}
     The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
     The advantage of this plan is that there is far less changes to the existing cores than plan B.
    \subsection{Plan B}
    In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
+   \begin{figure}[H]
+      \centering
+       \begin{tabular}{ | c | c | }
+    	    \hline
+    	    $1^{st}$ CUDA core group & $2^{nd}$ CUDA core group \\ \hline
+    	   32-bit multiplier & 32-bit multiplier \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Second plan CUDA core new configuration.}
+  	\label{fig:planB_cores}
+   \end{figure}
    The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for such operand type would be removed.
    And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
    The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
