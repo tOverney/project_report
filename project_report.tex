@@ -1,9 +1,14 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{caption}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \usepackage{mathtools}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
@@ -17,16 +22,48 @@
 \date{\today}
 \maketitle
 
-\section{Goals}
-	The goal of this project was to study and understand GPUs to suggest hardware
-    changes and design an SIMD device with integer capabilities appropriate for
-    integer-heavy applications such as large numbers factorisations.
+\nocite{*}
 
-\section{Problem analysis: factorisation of large integers}
-    \cite{cofact14} describes the applications that must be targeted by this project.
-    The algorithm presented make heavy use of integer multiplications with large 
-    operands. A common way of computing modular exponentiation uses Montgomery 
-    multiplication \cite{montgom90}.
+\setcounter{tocdepth}{1}
+\tableofcontents
+\listoffigures
+
+\chapter{Introduction}
+
+    Due to their SIMD nature, GPUs have been used in different scientific fields to perform
+    non-graphical computations for a while. They're used for particle and molecular dynamic 
+    modeling, astrophysic and fluid mechanic modeling.
+    More recently they've been used for cryptographic applications and in particular
+    to factorize large numbers in an attempt to compromise RSA encryption \cite{cofact14}.
+    Cryptography-related applications make heavy use of very large integer operations.
+    Here's an algorithm as example from \cite{cofact14}:
+    \begin{algorithm}
+    \caption{Large operands multiplication}\label{mulalgo}
+    \begin{algorithmic}[1]
+        \Require{Integers x and $Y=\sum_{i=0}^{n-1}Y_ir^i$ such that $0\leq x$, $Y_i<r$ for $0\leq i<n$.}
+        \Ensure{$Z=x\cdot Y = \sum_{i=0}^nZ_ir^i$}
+        \State mul.lo($Z_0$, x, $Y_0$)
+        \State mul.hi($Z_1$, x, $Y_0$)
+        \State mad.lo.cc($Z_1$, x, $Y_1$, $Z_1$)
+        \State mul.hi($Z_2$, x, $Y_1$)
+        \For{$i=2$ to $n-2$}
+            \State madc.lo.cc($Z_i$, x, $Y_i$, $Z_i$)
+            \State mul.hi($Z_{i+1}$, x, $Y_i$)
+        \EndFor
+        \State madc.lo.cc($Z_{n-1}$, x, $Y_{n-1}$, $Z_{n-1}$)
+        \State madc.hi($Z_n$, x, $Y_{n-1}$, 0)
+        \State \textbf{return} $Z (=\sum_{i=0}^nZ_ir^i)$
+    \end{algorithmic}
+    \end{algorithm}
+
+    Due to the nature of asymetric cryptography, these applications are bound by
+    integer computing capacity which is not the focus of GPU. GPUs are designed
+    around floating-point operations.
+
+\section{Goals}
+    The aim of this project is to study and identify the limitations of GPUs
+    when used for cryptography and large integers computation in order to suggest
+    hardware changes with integer capabilities appropriate for integer-heavy applications.
 
 % Change name and create chapter for microbenchmarking
 \section{Methods}
@@ -37,14 +74,14 @@
 	The benchmark programs have been ran on a machine equipped with an Nvidia
     GeForce GTX 580 GPU.
 
-\section{Terminology}
+\chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
     guide to Nvidia's Fermi architecture and its vocabulary:
-
-    \subsection{Streaming Multiprocessors}
+    %TODO add a picture of the full chip here? Or in the part where the cost increase is computed?
+    \section{Streaming Multiprocessors}
     The largest building block inside the Fermi architecture is the 
     \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
-    ~\pageref{fig:SM}) abbreviated SM in this report. Fermi cards are equipped
+    ~\pageref{fig:SM}) abbreviated SM in this report. The GTX580 card is equipped
     with 16 of these SMs.
     \begin{figure}[H]
     \centering
@@ -66,7 +103,7 @@
     that can be reused for integer computation components, thus it's not part
     of the following research. The focus of the experiments are the CUDA cores.
 
-    \subsection{CUDA Cores}
+    \section{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
     according to Nvidia.
     
@@ -82,8 +119,8 @@
     adjusted to 2x16 integers ALUs and 2x16 simple-precision floating-point
     ALUs.
 
-    \subsection{Basics of Fermi's scheduling}
-        \subsubsection{Grids and blocks} 
+    \section{Basics of Fermi's scheduling}
+        \subsection{Grids and blocks} 
         A cuda kernel (that is: a section of code that will run on the GPU) is
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
@@ -91,12 +128,13 @@
         SM. As we're interested in the properties of single SMs or even, single
         cores, every benchmarking experiment was done using a grid size of one.
 
-        \subsubsection{Warps}
+        \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
         threads scheduled, coming from two warps).
 
+\chapter{Benchmarking}
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
@@ -313,7 +351,7 @@
         \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
     \end{itemize}
-\section{Additionnal graphics and tables}
+\section{Additional graphics and tables}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[H]
     		\centering
@@ -323,13 +361,43 @@
 	    	\captionsetup{justification=centering}    
 	    	\caption{Order in which thread batches are started.}
     \end{figure}
-
-    \subsection{Graphics intersteps data}
+   %TODO Fill the skeleton
+\chapter{Beyond the current architecture}
+    Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
+   \section{Proposed enhancement}
+   The most blatant upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
+   There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
+   \subsection{Plan A}
+    In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
+    The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
+    The advantage of this plan is that there is far less changes to the existing cores than plan B.
+   \subsection{Plan B}
+   In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
+   The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for such operand type would be removed.
+   And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
+   The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
+   \section{Estimated performance increase}
+   \section{Estimated cost variance}
+   \subsection{Plan A}
+   \subsection{Plan B}
+   
+\chapter{Conclusion} 
+    This project was a mess, it's about everything there is to say!
+    
+    I'd like to thank Cl\'{e}ment Humbert for all the hard-work he put in this project and made it something else than just a huge "I don't care about that, leave me alone"  
+   
+   
+  \appendix 
+   
+   %TODO put those stuff elsewhere!
+\chapter{stuff that needs to be elsewhere}
+    \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
     \begin{itemize} 
         \item the cores' pipelines, if it represents the delay between dependencies checks;
         \item the scheduling mechanism, if it represents the delaying of threads operations in favor of the launch of other threads.
     \end{itemize}
+    
     \centering
     \include{intersteps_times_1_SM_int}
     \include{intersteps_times_1_SM_float}
@@ -356,6 +424,9 @@ As there is no dependency between the even and odd instructions and there isn't 
   	\caption{Planned running scheme for 64 threads with interleaved dependent floating point number multiplication.}
   	\label{fig:fp_prediction_64_halfdep}
    \end{figure}
+   
+   \bibliography{project_report}{}
+   \bibliographystyle{plain}
 
 
 \end{document}
