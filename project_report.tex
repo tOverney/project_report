@@ -74,6 +74,7 @@
     
     To do so different ways of implementing Montgomery multipliers were
     explored:
+    
     %TODO INSERT MONTGOMERY SHIT HERE
 
     The impact of the new opcodes were to be measured with the assistance of
@@ -478,7 +479,7 @@
     % TODO insert improvement graph
 
    \section{Estimated cost variance}
-   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the 65nm library GPSVT.
+   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$ \cite{GTX580Datasheet}
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in 65nm)}.\]
    \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in 65nm)}.\]
    The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} has been used in addition to the known total chip die size which is $520 mm^2$\cite{G5xxwiki}.
