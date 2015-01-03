@@ -94,17 +94,17 @@
     \section{Streaming Multiprocessors}
     The largest building block inside the Fermi architecture is the 
     \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
-    ~\pageref{fig:SM} \cite{fermiWPHERE}) abbreviated SM in this report. The GTX580 card is equipped
+    ~\pageref{fig:SM}) abbreviated SM in this report. The GTX580 card is equipped
     with 16 of these SMs.
     \begin{figure}[H]
     \centering
         \includegraphics[width=0.75\linewidth]{pictures/Fermi}
         \captionsetup{justification=centering}
-        \caption{Fermi's streaming multiprocessor schematic representation.}
+        \caption{Fermi's streaming multiprocessor schematic representation.\cite{fermiwhitepap}}
         \label{fig:SM}
     \end{figure}
 
-    Each SM is composed of the following computation blocks:
+    Each SM is composed of the following computation blocks\cite{fermiwhitepap}:
     \begin{itemize}
         \item 32 CUDA cores in two groups of 16,
         \item 16 load/store units (LD/ST on the figure)
@@ -118,7 +118,7 @@
 
     \section{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
-    according to Nvidia.
+    according to Nvidia\cite{fermiwhitepap}.
     
     \begin{figure}[H]
     \centering
@@ -138,14 +138,14 @@
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
         The block size determines how many threads will run the code inside each
-        SM. As we're interested in the properties of single SMs or even, single
+        SM\cite{cudaprog}. As we're interested in the properties of single SMs or even, single
         cores, every benchmarking experiment was done using a grid size of one.
 
         \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
-        threads scheduled, coming from two warps).
+        threads scheduled, coming from two warps)\cite{cudaprog}.
 
 \chapter{Benchmarking}
 
@@ -156,7 +156,7 @@
     function offered by the CUDA API.
 
 	The benchmark programs have been ran on a machine equipped with an Nvidia
-    GeForce GTX 580 GPU.
+    GeForce GTX 580 GPU used by \cite{cofact14}.
 
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
