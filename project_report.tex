@@ -18,7 +18,7 @@
 \begin{document}
 
 \title{Insert Appropriate Title Here}
-\author{Paolo Ienne, Andrea Miele\and Ewaida Moshen, Cl\'{e}ment Humbert, Tristan Overney}
+\author{Cl\'{e}ment Humbert, Tristan Overney\and Paolo Ienne, Andrea Miele, Ewaida Moshen (Supervisors)}
 \date{\today}
 \maketitle
 
@@ -65,14 +65,18 @@
     when used for cryptography and large integers computation in order to suggest
     hardware changes with integer capabilities appropriate for integer-heavy applications.
 
-% Change name and create chapter for microbenchmarking
-\section{Methods}
-	To achieve the aforementioned goals, a serie of specially crafted CUDA kernels
-	were used. These usually contain large batches of instructions that were 
-	timed with the assistance of the \texttt{clock64()} function offered by the CUDA API.
+\chapter{First approach}
+    The first idea to enhance the cryptographic capabilities of the GPU is to
+    build crypto specific hardware into the original hardware to expose new 
+    operations (in the form of assembly opcodes) to the developers with the 
+    shortest latency possible. 
+    
+    To do so different ways of implementing Montgomery multipliers were
+    explored:
+    % INSERT MONTOMERY SHIT HERE
 
-	The benchmark programs have been ran on a machine equipped with an Nvidia
-    GeForce GTX 580 GPU.
+    And the impact of the new opcodes were to be measured with the assistance of
+    GPGPU-SIM\cite{gpgpusim09} a Fermi architecture simulator.
 
 \chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
@@ -135,6 +139,16 @@
         threads scheduled, coming from two warps).
 
 \chapter{Benchmarking}
+
+\section{Methods}
+	To get informations about the microarchitecture of the CUDA cores, a serie 
+    of specially crafted CUDA kernels were used. These usually contain large 
+    batches of instructions that were timed with the assistance of the \texttt{clock64()} 
+    function offered by the CUDA API.
+
+	The benchmark programs have been ran on a machine equipped with an Nvidia
+    GeForce GTX 580 GPU.
+
 \section{Pipeline properties}
 	This section contains the results obtained through the previously described
 	methods using large batches of integer multiplications.
