@@ -355,15 +355,15 @@
 
 \section{Results}
     \subsection{Pipeline structure}
-    As seen during the experiments, the CUDA core's pipeline appears to be a
-    16 steps pipeline. The fact that integer multiplication and 
+    As seen during the experiments, the CUDA core's pipeline appears to be an
+    18 steps pipeline. The fact that integer multiplication and 
     simple-precision floating-point multiplication both take the same amount
     of time (on a machine that's supposed to be a floating-point calculation
     optimized device) until the pipelines are filled suggests a simple,
-    no-dependency-check, scheduler that fires up new instructions every 16 cycles.
+    no-dependency-check, scheduler that fires up new instructions every 18 cycles.
 
     It also appears rather clearly that, while 32 cores per SM are advertised by
-    Nvidia, only 16 are equipped with integer ALUs; allowing only 16 integer
+    Nvidia, only 16 are equipped with integer ALUs; allowing only 18 integer
     operations to be scheduled every 18 cycles.
     
     \subsection{Prospects}
@@ -433,6 +433,53 @@
    And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
    The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
    \section{Estimated performance increase}
+    To estimate the increase in integers multiplications capabilities, gpgpusim
+    is used. The base configuration is the one for GTX480 shipped with gpgpusim.
+    With the default configuration, gpgpusim simulate integer multiplication as
+    any other operation (with two pipelines) but with a slower initiation rate.
+    The first step to measure the performance is to simulate a one-pipeline
+    multiplication with the following configuration changes:
+    % TODO insert first config table
+    \begin{figure}[H]
+    \centering
+       \begin{tabular}{ | l | l | }
+            \hline
+    	    Option & Value \\ \hline
+    	    pipeline\_widths & 1,1,1,1,1,1,1 \\
+            num\_sp\_units & 1 \\
+            ptx\_opcode\_initiation\_int & 1,2,1,1,8 \\
+            operand\_collector\_num\_in\_ports\_sp & 1 \\
+            operand\_collector\_num\_out\_ports\_sp & 1 \\ \hline
+
+  	    \end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Single multiplier simulation configuration.}
+  	\label{tab:1stconfig}
+    \end{figure}
+
+    To simulate the changes, the following configuration is used (Table ~\ref{tab:2ndconfig}
+    illustrates the changes from ~\ref{tab:1stconfig}):
+    % TODO insert second config table
+    \begin{figure}[H]
+    \centering
+        \begin{tabular}{ | l | l | }
+    	    \hline
+    	    Option & Value \\ \hline
+    	    pipeline\_widths & 2,1,1,2,1,1,2 \\
+            num\_sp\_units & 2 \\
+            ptx\_opcode\_initiation\_int & 1,2,2,1,8 \\
+            operand\_collector\_num\_in\_ports\_sp & 2 \\
+            operand\_collector\_num\_out\_ports\_sp & 2 \\ \hline
+  	    \end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Two multipliers simulation configuration..}
+  	\label{tab:2ndconfig}
+    \end{figure}
+
+    Launching an integer multiplication benchmark on both configurations yields the running
+    times illustrated in ~\ref{graph_time_improvement}. 
+    % TODO insert improvement graph
+
    \section{Estimated cost variance}
    In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the 65nm library GPSVT.
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in 65nm)}.\]
