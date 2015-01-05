@@ -205,7 +205,7 @@
     a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
     The running times are expected to be slightly higher for the integer
-    multiplications, as GPUs are optimized for floting point computation
+    multiplications, as GPUs are optimized for float computation
     but to deteriorate in a similar fashion (begin to deteriorate
     at the same point, at the same rate) due to each core being equipped with
     integer and float ALUs.
@@ -433,7 +433,7 @@
   	\label{fig:current_cores}
    \end{figure}
    There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
-   \subsection{Plan A}
+   \subsection{Plan A: 32-bit integer multiplier for every core}
     In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
     \begin{figure}[H]
       \centering
@@ -448,7 +448,7 @@
    \end{figure}
     The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
     The advantage of this plan is that there is far less changes to the existing cores than plan B.
-   \subsection{Plan B}
+   \subsection{Plan B: Every core with only integer support}
    In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
    \begin{figure}[H]
       \centering
@@ -523,7 +523,7 @@
         \label{fig:fermiChip}
     \end{figure}
    
-   \subsection{Plan A}
+   \subsection{Plan A: 32-bit integer multiplier for every core}
    First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure \ref{fig:fermiChip} has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ corresponding to
    the known $520mm^2$ and the table \ref{tab:sizeChart} has been filled.
    \begin{figure}[H]
@@ -555,7 +555,7 @@
     \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
     \[\text{full chip size} + (mul_{32} \times 16) \times  = 5.24 \times 10^8 \mu m^2 \]
    
-   \subsection{Plan B}
+   \subsection{Plan B: Every core with only integer support}
    
    
 \chapter{Conclusion}
