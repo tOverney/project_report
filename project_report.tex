@@ -117,7 +117,7 @@
     instruction's latency).
 
     To determine the speed/size of the new components the original cores have to
-    be studied as not much is known from nVidia sources. In order to understand 
+    be studied as not much is known from Nvidia sources. In order to understand 
     the cores and be able to suggest meaningful changes, a serie of microbenchmarking 
     experiments had to be done. 
 
@@ -404,6 +404,45 @@
         \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
     \end{itemize}
+
+\section{Instruction level parallelism}
+    To check if the SM scheduler are aware of dependencies, a benchmark with two streams of independent instructions has been ran with an execution
+    scheme as described by \ref{fig:fp_prediction_64_halfdep}.
+    As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
+\begin{figure}[H]
+      \centering
+       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
+    	    \hline
+    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
+    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
+    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
+    	   3 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
+           4 & $t_{16,1}$ & $t_{17,1}$ & ... & $t_{31,1}$ & $t_{48, 1}$ & ... & $t_{63, 1}$ \\ \hline
+    	   5 & - & - & ... & - & - & ... & - \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+    	   18 & - & - & ... & - & - & ... & - \\ \hline
+    	   19 & $t_{0,2}$ & $t_{1,2}$ & ... & $t_{15,2}$ & $t_{32,2}$ & ... & $t_{47,2}$ \\ \hline
+    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
+  	\end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Planned running scheme for 64 threads with interleaved dependent float multiplication.}
+  	\label{fig:fp_prediction_64_halfdep}
+   \end{figure}
+
+    \subsection{Results}
+    \begin{figure}[H]\label{fig:ilp_results}
+		\centering
+		\vspace{-20pt}
+        \includegraphics[width=\scalingfactor\linewidth]{"graphics/ilp_graph"}
+		\vspace{-15pt}
+		\captionsetup{justification=centering}
+        \caption{Running times of benchmarks with two independent instruction streams.}
+    \end{figure}
+
+    The running time for a million operations goes down to 9 million cycles in \ref{fig:ilp_results}
+    against 18 million without instruction level parallelism. This shows that the scheduler has the
+    capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
+    
 \section{Additional graphics and tables}
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[H]
@@ -562,21 +601,26 @@
    \subsection{Plan B: Every core with only integer support}
    
 \chapter{Conclusion}
-    Nvidia's policy to keep everything closed source and secret made the original 
-    goal of the project impossible to attain and forced the realization of micro-benchmarking 
-    in order to find more infos on the architecture we've chosen to base our work on. We went 
-    from an initial plan of designing our own many-cores crypto processor to trying to 
-    reverse-engineer the work of a full team of engineers.
+    In this project it has been made obvious that the integer performances 
+    (and a fortiori the crypto performances) of Nvidia GPUs are due to an 
+    economy on integer hardware made on purpose but that spares little area 
+    for a consequent drop in performances. 
     
     While GPU cards have a computation model well adapted to cryptography, it seems that Nvidia
     cares less and less about integer performances as we can see the multiplication throughput
     compared to the number of cores dropped in Kepler compared to Fermi and is even translated as
     multiple instructions in Maxwell \cite{cudaprog}.
    
+    Nvidia's policy to keep everything closed source and secret made the original 
+    goal of the project (designing a crypto-specific architecture based on Nvidia GPUs architectures)
+    impossible to attain and forced the realization of micro-benchmarking 
+    in order to find more informations on the architecture we've chosen to base our work on. We went 
+    from an initial plan of designing our own many-cores crypto processor to trying to 
+    reverse-engineer the work of a full team of engineers.
+
   \appendix 
    
 \chapter{Additional benchmarking data}
-   %TODO put those stuff elsewhere!
     \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
     \begin{itemize} 
@@ -628,26 +672,6 @@
 
     While GPGPU-Sim has a higher clock count than the GTX 580 and its evolution is quite different, the running times are still strongly correlated and it was elected to use GPGPU-Sim.
 
-As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
-\begin{figure}[H]
-      \centering
-       \begin{tabular}{ | r || c | c | c | c || c | c | c | }
-    	    \hline
-    	    time since beginning & $C_1$ & $C_2$ & ... & $C_{16}$ & $C_{17}$ & ... & $C_{32}$ \\ \hline  \hline
-    	   1 & $t_{0,0}$ & $t_{1,0}$ & ... & $t_{15,0}$ & $t_{32, 0}$ & ... & $t_{47, 0}$ \\ \hline 
-    	   2 & $t_{16,0}$ & $t_{17,0}$ & ... & $t_{31,0}$ & $t_{48, 0}$ & ... & $t_{63, 0}$ \\ \hline
-    	   3 & $t_{0,1}$ & $t_{1,1}$ & ... & $t_{15,1}$ & $t_{32, 1}$ & ... & $t_{47, 1}$ \\ \hline
-           4 & $t_{16,1}$ & $t_{17,1}$ & ... & $t_{31,1}$ & $t_{48, 1}$ & ... & $t_{63, 1}$ \\ \hline
-    	   5 & - & - & ... & - & - & ... & - \\ \hline
-    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
-    	   18 & - & - & ... & - & - & ... & - \\ \hline
-    	   19 & $t_{0,2}$ & $t_{1,2}$ & ... & $t_{15,2}$ & $t_{32,2}$ & ... & $t_{47,2}$ \\ \hline
-    	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
-  	\end{tabular}
-  	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 64 threads with interleaved dependent float multiplication.}
-  	\label{fig:fp_prediction_64_halfdep}
-   \end{figure}
    
    \bibliography{project_report}{}
    \bibliographystyle{plain}
