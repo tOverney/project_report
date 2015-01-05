@@ -567,8 +567,15 @@
     \end{figure}
    
    \subsection{Plan A: 32-bit integer multiplier for every core}
-   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure \ref{fig:fermiChip} has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ corresponding to
-   the known $520mm^2$ and the table \ref{tab:sizeChart} has been filled.
+   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure \ref{fig:fermiChip}) has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ where Figure \ref{fig:fermiChipWithLeg} showcase the different part of the chip that were identified and used. Then it was put 
+   in correspondance to the known $520mm^2$ area of the full chip and the table \ref{tab:sizeChart} has then been filled.
+   \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.7\linewidth]{pictures/FermiChipWithLegend}
+        \captionsetup{justification=centering}
+        \caption{Inside the orange frame is an SM; inside the blue frame are the 32 CUDA cores of that SM.}
+        \label{fig:fermiChipWithLeg}
+    \end{figure}
    \begin{figure}[H]
     \centering
         \begin{tabular}{ | l | r | r | }
@@ -576,8 +583,8 @@
     	    Component & Size in $\mu m^2$ & Size in $px^2$ \\ \hline
     	    Full chip &  $5.20 \times 10^8$ & 1,440,000 \\
             Streaming multiprocessor (SM) & $1.50 \times 10^7$ & 41,600 \\
-            32 CUDA cores & $4.14 \times 10^6$ & 11458 \\
-            Average CUDA core & $1.29 \times 10^5$ &  358 \\ \hline
+            32 CUDA cores & $9.71 \times 10^5$ & 2688 \\
+            Average CUDA core & $3.03 \times 10^4$ &  84 \\ \hline
   	    \end{tabular}
   	\captionsetup{justification=centering}
   	\caption{Size chart between pixels ($px$) and $\mu m^2$ of Fermi's elements.}
@@ -586,17 +593,18 @@
     
     The size, in the chart, for a single CUA core is an average of a "float unit and 32-bit multiplier"
     and a "float unit" CUDA core, so in order to find the new core size only half a 32-bit multiplier has to be added.
-    \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 1.37 \times 10^5 \mu m^2 \] 
+    \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 3.77 \times 10^4 \mu m^2 \] 
     
-    So that would be a size increase of $5.7\%$ on the average core size.
+    So that would be a size increase of $24.4\%$ on the average core size.
     
     The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
     \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 \]
     Which represent an increase of $1.5\%$ on a SM size.
     
-    And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM's size.
+    And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM size.
     \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
-    \[\text{full chip size} + (mul_{32} \times 16) \times  = 5.24 \times 10^8 \mu m^2 \]
+    \[\text{full chip size} + (mul_{32} \times 16) \times  16 = 5.24 \times 10^8 \mu m^2 \]
+    Which represent an increase of $1.5\%$ on the full chip size.
    
    \subsection{Plan B: Every core with only integer support}
    
