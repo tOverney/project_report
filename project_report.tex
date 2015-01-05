@@ -39,7 +39,7 @@
     Cryptography-related applications make heavy use of very large integer operations.
     Here's an algorithm as example from \cite{cofact14}:
     \begin{algorithm}
-    \caption{Large operands multiplication}\label{mulalgo}
+    \caption{Large operands multiplication}\label{alg:mulalgo}
     \begin{algorithmic}[1]
         \Require{Integers x and $Y=\sum_{i=0}^{n-1}Y_ir^i$ such that $0\leq x$, $Y_i<r$ for $0\leq i<n$.}
         \Ensure{$Z=x\cdot Y = \sum_{i=0}^nZ_ir^i$}
@@ -57,9 +57,13 @@
     \end{algorithmic}
     \end{algorithm}
 
-    Due to the nature of asymetric cryptography, these applications are bound by
+    Due to the nature of asymmetric cryptography, these applications are bound by
     integer computing capacity which is not the focus of GPU. GPUs are designed
-    around floating-point operations.
+    around floating-point number operations, for older GPUs it was single-precision
+    floating-point number (which will be referred to as float from now on) operations and
+    on more recent GPUs tendency is to focus on double precision floating-point number operations.
+    Fermi generation is the last generation to have decent integer multiplication performances
+    compared to its float performance. It is one of the reason it was chosen for this project.
 
 \section{Goals}
     The aim of this project is to study and identify the limitations of GPUs
@@ -75,12 +79,12 @@
     An algorithm that is constantly used in cryptography is the Montgomery multiplication,
     a special kind of modular multplication. Implementing such an operation in hardware can
     be done in many ways, one of the most efficient is the rolled implementation described
-    by the algorithm \ref{montgomery}. Where operands $X$ and $Y$ would have been prepared
+    by the algorithm \ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
     by software for the multiplication And that can be unrolled for the hardware implementation
     in order to allow for pipelining.
     
     \begin{algorithm}
-    \caption{Hardware Montgomery multiplier\cite{montgomeryHard}}\label{montgomery}
+    \caption{Hardware Montgomery multiplier\cite{montgomeryHard}}\label{alg:montgomery}
     \begin{algorithmic}[1]
         \Require{Integers $X$, $Y$ and $M$ with $0\leq X$, $Y < M$.}
         \Ensure{$P=(X * Y (2^n)^{-1})\text{ mod }M$.}
@@ -130,7 +134,7 @@
     \centering
         \includegraphics[width=0.75\linewidth]{pictures/Fermi}
         \captionsetup{justification=centering}
-        \caption{Fermi's streaming multiprocessor schematic representation.\cite{fermiwhitepap}}
+        \caption{Fermi's SM schematic representation.\cite{fermiwhitepap}}
         \label{fig:SM}
     \end{figure}
 
@@ -142,9 +146,11 @@
               arithmetic functions such as sines and logarithms.
     \end{itemize}
     
-    As the SFU is dedicated to floating-point operations it's already an area
+    As the SFU is dedicated to complex float operations it's already an area
     that can be reused for integer computation components, thus it's not part
     of the following research. The focus of the experiments are the CUDA cores.
+    
+    Integer is supported with at most 32-bits in Fermi.
 
     \section{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
@@ -159,8 +165,7 @@
     \end{figure}
     
     From figure~\ref{fig:CUDACore} the notion of twice 16 cores can be
-    adjusted to 2x16 integers ALUs and 2x16 simple-precision floating-point
-    ALUs.
+    adjusted to 2x16 integers ALUs and 2x16 float ALUs.
 
     \section{Basics of Fermi's scheduling}
         \subsection{Grids and blocks} 
@@ -203,7 +208,7 @@
     multiplications, as GPUs are optimized for floting point computation
     but to deteriorate in a similar fashion (begin to deteriorate
     at the same point, at the same rate) due to each core being equipped with
-    integer and single-precision floating-point ALUs.
+    integer and float ALUs.
     
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
@@ -217,12 +222,11 @@
 	
     The results are against the expectations as it's easy to see the integer
     multiplication times starting to grow at 289 threads in the block against
-    577 for the simple-precision floating-point multiplications.
+    577 for the float multiplications.
     
     %not at the right place, there should be a section about FP benchmark.
     As the running time is constant up to 576 threads running in parallel and that we have 32 cores
-    available, the hypothesis has been formulated that the pipeline depth for the single-precision 
-    floating-point multiplication is 18 ($576/32 = 18$). Which seems to correlate with the running
+    available, the hypothesis has been formulated that the pipeline depth for the float multiplication is 18 ($576/32 = 18$). Which seems to correlate with the running
     times of the integers multiplication. 
     
     Figure~\ref{fig:fp_prediction_512}
@@ -243,7 +247,7 @@
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 576 threads with floating point number multiplication.}
+  	\caption{Planned running scheme for 576 threads with float multiplication.}
   	\label{fig:fp_prediction_512}
    \end{figure}
    
@@ -279,7 +283,7 @@
     the loop used in the benchmarks to adjust the running times found and see if they match with
     the hypothesis about pipeline length and scheduling. 
 	\subsubsection{Expectations}
-	As seen in \ref{par:pipeline_exp} the cost of simple-precision floating-point
+	As seen in \ref{par:pipeline_exp} the cost of float
     operations goes up at 576 threads. This would imply that every pipeline of
     the SM is perfectly filled with 576 threads. Dividing 576 threads by
     the 32 cores gives a pipeline length of 18. In addition, the cost increase
@@ -302,7 +306,7 @@
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 577 threads with floating point number multiplication.}
+  	\caption{Planned running scheme for 577 threads with float multiplication.}
   	\label{fig:fp_prediction_513}
    \end{figure}
 
@@ -340,18 +344,18 @@
     iterations' instructions. The next possible explanation would be data transfer overhead caused
     by compiler shenanigans.
 
-\section{Mixing single-precision floating-points and integer multiplication}
+\section{Mixing float and integer multiplication}
 	\subsection{The experiment}
 	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
     integer multiplication able to run parallely on an SM was only half the number of 
-    single-precision floating-point multiplication. Leading to the conclusion that only one of
+    float multiplication. Leading to the conclusion that only one of
     the two 16 cores group of an SM was equipped with integer. The following experiments issue 
-    integer multiplication in parallel of floating-point operations to confirm this hypothesis.
-	\subsection{Benchmark running times, 1 single-precision floating-points for 1 integer multiplication}
+    integer multiplication in parallel of float operations to confirm this hypothesis.
+	\subsection{Benchmark running times, 1 float multiplication for 1 integer multiplication}
 	If indeed only 1 out of 2 cores group can run integer multiplication then
-    adding the same amount of floating-point multiplications as there were integer
+    adding the same amount of float multiplications as there were integer
     multiplications should not increase the total time spent executing the benchmark 
-    program as the single-precision floating-point multiplication can
+    program as the float multiplication can
     be ran on the other core group (the one that does not possess integer multiplication).
 	
 	One million multiplication of each kind has been ran on 1 to 1024 threads to
@@ -363,18 +367,18 @@
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
-		\caption{Integer/Floating point multiplication ratio: 1.}
+		\caption{Integer/Float multiplication ratio: 1.}
 	\end{figure}
 	\pagebreak
 
-	\subsection{Benchmark running times with mixed single-precision floating-point and integer multiplications}
+	\subsection{Benchmark running times with mixed float multiplications and integer multiplications}
 	\begin{figure}[H]
 		\centering
 		\vspace{-20pt}
         \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_mixed"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
-        \caption{Running times of benchmarks with a mix of single-precision floating-points and integers multiplications.}
+        \caption{Running times of benchmarks with a mix of flaot multiplications and integers multiplications.}
     \end{figure}
 
     \subsection{Results}
@@ -386,8 +390,8 @@
     \subsection{Pipeline structure}
     As seen during the experiments, the CUDA core's pipeline appears to be an
     18 steps pipeline. The fact that integer multiplication and 
-    simple-precision floating-point multiplication both take the same amount
-    of time (on a machine that's supposed to be a floating-point calculation
+    float multiplication both take the same amount
+    of time (on a machine that's supposed to be a float computation
     optimized device) until the pipelines are filled suggests a simple,
     no-dependency-check, scheduler that fires up new instructions every 18 cycles.
 
@@ -413,11 +417,10 @@
 	    	\captionsetup{justification=centering}    
 	    	\caption{Order in which thread batches are started.}
     \end{figure}
-   %TODO Fill the skeleton
 \chapter{Beyond the current architecture}
     Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
    \section{Proposed enhancement}
-   The most blatant upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
+   The most obvious upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
    \begin{figure}[H]
       \centering
        \begin{tabular}{ | c | c | }
@@ -554,6 +557,7 @@
    
    \subsection{Plan B}
    
+   
 \chapter{Conclusion}
     Nvidia's policy to keep everything closed source and secret made the original 
     goal of the project impossible to attain and forced the realization of micro-benchmarking 
@@ -568,8 +572,9 @@
    
   \appendix 
    
-   %TODO put those stuff elsewhere!
+
 \chapter{stuff that needs to be elsewhere}
+   %TODO put those stuff elsewhere!
     \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
     \begin{itemize} 
@@ -600,7 +605,7 @@ As there is no dependency between the even and odd instructions and there isn't 
     	   ... & ... & ... & ... & ... & ... & ... & ... \\ \hline
   	\end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Planned running scheme for 64 threads with interleaved dependent floating point number multiplication.}
+  	\caption{Planned running scheme for 64 threads with interleaved dependent float multiplication.}
   	\label{fig:fp_prediction_64_halfdep}
    \end{figure}
    
