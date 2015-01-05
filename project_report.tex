@@ -509,9 +509,9 @@
 
    \section{Estimated cost variance}
    In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$ \cite{GTX580Datasheet}
-   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in 65nm)}.\]
-   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in 65nm)}.\]
-   The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} has been used in addition to the known total chip die size which is $520 mm^2$\cite{G5xxwiki}.
+   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} => 6,471 \mu m^2 \text{ (in $40nm$)}.\]
+   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} => 14,801 \mu m^2 \text{ (in $40nm$)}.\]
+   The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$\cite{G5xxwiki}.
    \begin{figure}[H]
     \centering
         \includegraphics[width=0.7\linewidth]{pictures/FermiChip}
@@ -521,6 +521,37 @@
     \end{figure}
    
    \subsection{Plan A}
+   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure \ref{fig:fermiChip} has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ corresponding to
+   the known $520mm^2$ and the table \ref{tab:sizeChart} has been filled.
+   \begin{figure}[H]
+    \centering
+        \begin{tabular}{ | l | r | r | }
+    	    \hline
+    	    Component & Size in $\mu m^2$ & Size in $px^2$ \\ \hline
+    	    Full chip &  $5.20 \times 10^8$ & 1,440,000 \\
+            Streaming multiprocessor (SM) & $1.50 \times 10^7$ & 41,600 \\
+            32 CUDA cores & $4.14 \times 10^6$ & 11458 \\
+            Average CUDA core & $1.29 \times 10^5$ &  358 \\ \hline
+  	    \end{tabular}
+  	\captionsetup{justification=centering}
+  	\caption{Size chart between pixels ($px$) and $\mu m^2$ of Fermi's elements.}
+  	\label{tab:sizeChart}
+    \end{figure}
+    
+    The size, in the chart, for a single CUA core is an average of a "float unit and 32-bit multiplier"
+    and a "float unit" CUDA core, so in order to find the new core size only half a 32-bit multiplier has to be added.
+    \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 1.37 \times 10^5 \mu m^2 \] 
+    
+    So that would be a size increase of $5.7\%$ on the average core size.
+    
+    The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
+    \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 \]
+    Which represent an increase of $1.5\%$ on a SM size.
+    
+    And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM's size.
+    \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
+    \[\text{full chip size} + (mul_{32} \times 16) \times  = 5.24 \times 10^8 \mu m^2 \]
+   
    \subsection{Plan B}
    
 \chapter{Conclusion}
