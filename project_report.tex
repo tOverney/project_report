@@ -497,7 +497,6 @@
     	    Option & Value \\ \hline
     	    pipeline\_widths & 2,1,1,2,1,1,2 \\
             num\_sp\_units & 2 \\
-            ptx\_opcode\_initiation\_int & 1,2,2,1,8 \\
             operand\_collector\_num\_in\_ports\_sp & 2 \\
             operand\_collector\_num\_out\_ports\_sp & 2 \\ \hline
   	    \end{tabular}
@@ -507,8 +506,16 @@
     \end{figure}
 
     Launching an integer multiplication benchmark on both configurations yields the running
-    times illustrated in ~\ref{graph_time_improvement}. 
-    % TODO insert improvement graph
+    times illustrated in ~\ref{fig:time_improvement}. 
+    \begin{figure}[H]
+    \centering
+        \includegraphics[width=0.7\linewidth]{graphics/improvement-graph}
+        \captionsetup{justification=centering}
+        \caption{Running times on the default pipeline and on the improved architecture.}
+        \label{fig:time_improvement}
+    \end{figure}
+    
+    With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
 
    \section{Estimated cost variance}
    In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$ \cite{GTX580Datasheet}
@@ -600,7 +607,7 @@
     The running times yielded are plotted in Figure \ref{fig:gpu-sim-corr}.
     \begin{figure}[H]
     \centering
-        \includegraphics[width=0.7\linewidth]{graphics/comparative-graph}
+        \includegraphics[width=0.7\linewidth]{graphics/comparative_graph}
         \captionsetup{justification=centering}
         \caption{Running times on the GTX 580 plotted against GPGPU-Sim running times.}
         \label{fig:gpu-sim-corr}
