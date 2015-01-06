@@ -312,7 +312,7 @@
     The $\cfrac{1}{9}$ can be derived from the following formula
     \[ \cfrac{t_{\text{577threads}} - t_{\text{576threads}}}{t_{\text{576threads}}} \text{  .}\]
     The latency of an instruction is equal to the pipeline length, plus $\cfrac{1}{18}$ of
-    it for every additional warp after the $18^{\text{th}}$. So the latency l of an 
+    it for every additional warp after the $18^{\text{th}}$. Thus, the latency l of an 
     operation is $L + \text{max}\left(0, \left\lceil{\cfrac{N}{32} -18}\right\rceil\right)$ and to get the total
     running time of a benchmark, this latency must be added as a constant to
     represent the time the last instruction takes to get through the pipeline.
@@ -456,7 +456,7 @@
    \end{figure}
    There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
    \subsection{Plan A: 32-bit integer multiplier for every core}
-    In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. So all 32 cores would have a full float unit and a 32-bit multiplier.
+    In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. Consequently, all 32 cores would have a full float unit and a 32-bit multiplier.
     \begin{figure}[H]
       \centering
        \begin{tabular}{ | c | c | }
@@ -578,10 +578,10 @@
     \end{figure}
     
     The size, in the chart, for a single CUA core is an average of a ``float unit and 32-bit multiplier"
-    and a ``float unit" CUDA core, so in order to find the new core size only half a 32-bit multiplier has to be added.
+    and a ``float unit" CUDA core, in order to find the new core size only half a 32-bit multiplier has to be added.
     \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 3.77 \times 10^4 \mu m^2 .\] 
     
-    So that would be a size increase of $24.4\%$ on the average core size.
+    Thus, the changes would lead to a size increase of $24.4\%$ of the average core size.
     
     The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
     \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 .\]
@@ -607,7 +607,7 @@
    \[\alpha = \cfrac{u(\text{FP}_{24})}{\text{FP}_{24}} = \cfrac{u(\text{FP}_{24}\text{INT}_{32})}{\text{FP}_{24}\text{INT}_{32}}.\]
    As the value for $u(\text{FP}_{24}\text{INT}_{32})$ in function of $u(\text{FP}_{24})$ is known. It is found that:
    \[ u(\text{FP}_{24}) = 1.97 \times 10^4 \mu m^2 \text{ and, more interestingly : } \alpha = 2.52.\]
-   So finally, it is possible to find the size of the new CUDA core size for plan B as such:
+   And finally, it is possible to find the size of the new CUDA core size for plan B as such:
    \[ \text{new CUDA core size} = u(\text{INT}_{32}) = \alpha \times \text{INT}_{32} = 3.73 \times 10^4 \mu m^2.\]
    Which in this case would represent a $22.9\%$ increase for the size of a CUDA core.
    The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
