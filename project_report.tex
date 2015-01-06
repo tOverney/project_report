@@ -36,9 +36,9 @@
     non-graphical computations for a while. They're used for particle and molecular dynamic 
     modeling, astrophysic and fluid mechanic modeling.
     More recently they've been used for cryptographic applications and in particular
-    to factorize large numbers in an attempt to compromise RSA encryption \cite{cofact14}.
+    to factorize large numbers in an attempt to compromise RSA encryption~\cite{cofact14}.
     Cryptography-related applications make heavy use of very large integer operations.
-    Here's an algorithm as example from \cite{cofact14}:
+    Here's an algorithm as example from~\cite{cofact14}:
     \begin{algorithm}
     \caption{Large operands multiplication}\label{alg:mulalgo}
     \begin{algorithmic}[1]
@@ -85,7 +85,7 @@
     in order to allow for pipelining.
     
     \begin{algorithm}
-    \caption{Hardware Montgomery multiplier\cite{montgomeryHard}}\label{alg:montgomery}
+    \caption{Hardware Montgomery multiplier~\cite{montgomeryHard}}\label{alg:montgomery}
     \begin{algorithmic}[1]
         \Require{Integers $X$, $Y$ and $M$ with $0\leq X$, $Y < M$.}
         \Ensure{$P=(X * Y (2^n)^{-1})\text{ mod }M$.}
@@ -112,7 +112,7 @@
     
 
     The impact of the new opcodes were to be measured with the assistance of
-    GPGPU-SIM\cite{gpgpusim09} a Fermi architecture simulator. It was determined
+    GPGPU-SIM~\cite{gpgpusim09} a Fermi architecture simulator. It was determined
     that new opcodes can be added to gpgpu-sim and included in an instruction group
     to modify its latency (an unused operation could have been chosen to set the new
     instruction's latency).
@@ -135,7 +135,7 @@
     \centering
         \includegraphics[width=0.75\linewidth]{pictures/Fermi}
         \captionsetup{justification=centering}
-        \caption{Fermi's SM schematic representation\cite{fermiwhitepap}.}
+        \caption{Fermi's SM schematic representation~\cite{fermiwhitepap}.}
         \label{fig:SM}
     \end{figure}
 
@@ -155,7 +155,7 @@
 
     \section{CUDA Cores}
     Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
-    according to Nvidia\cite{fermiwhitepap}.
+    according to Nvidia~\cite{fermiwhitepap}.
     
     \begin{figure}[H]
     \centering
@@ -174,14 +174,14 @@
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
         The block size determines how many threads will run the code inside each
-        SM\cite{cudaprog}. As we're interested in the properties of single SMs or even, single
+        SM~\cite{cudaprog}. As we're interested in the properties of single SMs or even, single
         cores, every benchmarking experiment was done using a grid size of one.
 
         \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
         of 32 threads. Each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
-        threads scheduled, coming from two warps)\cite{cudaprog}.
+        threads scheduled, coming from two warps)~\cite{cudaprog}.
 
 \chapter{Benchmarking}
 
@@ -407,7 +407,7 @@
 
 \section{Instruction level parallelism}
     To check if the SM scheduler are aware of dependencies, a benchmark with two streams of independent instructions has been ran with an execution
-    scheme as described by \ref{fig:fp_prediction_64_halfdep}.
+    scheme as described by Figure ~\ref{fig:fp_prediction_64_halfdep}.
     As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
 \begin{figure}[H]
       \centering
@@ -439,7 +439,7 @@
         \caption{Running times of benchmarks with two independent instruction streams.}
     \end{figure}
 
-    The running time for a million operations goes down to 9 million cycles in \ref{fig:ilp_results}
+    The running time for a million operations goes down to 9 million cycles in Figure ~\ref{fig:ilp_results}
     against 18 million without instruction level parallelism. This shows that the scheduler has the
     capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
     
@@ -525,7 +525,7 @@
     \end{figure}
 
     To simulate the changes, the following configuration is used (Table ~\ref{tab:2ndconfig}
-    illustrates the changes from ~\ref{tab:1stconfig}):
+    illustrates the changes from Table ~\ref{tab:1stconfig}):
     \begin{figure}[H]
     \centering
         \begin{tabular}{ | l | l | }
@@ -554,10 +554,10 @@
     With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
 
    \section{Estimated cost variance}
-   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$ \cite{GTX580Datasheet}
+   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$~\cite{GTX580Datasheet}
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} => 6,471 \mu m^2 \text{ (in $40nm$)}.\]
    \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} => 14,801 \mu m^2 \text{ (in $40nm$)}.\]
-   The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$\cite{G5xxwiki}.
+   The size of Fermi's component was also needed and for that a high resolution picture of the chip (Figure ~\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$~\cite{G5xxwiki}.
    \begin{figure}[H]
     \centering
         \includegraphics[width=0.7\linewidth]{pictures/FermiChip}
@@ -567,8 +567,8 @@
     \end{figure}
    
    \subsection{Plan A: 32-bit integer multiplier for every core}
-   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure \ref{fig:fermiChip}) has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ where Figure \ref{fig:fermiChipWithLeg} showcase the different part of the chip that were identified and used. Then it was put 
-   in correspondance to the known $520mm^2$ area of the full chip and the table \ref{tab:sizeChart} has then been filled.
+   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure~\ref{fig:fermiChip}) has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ where Figure ~\ref{fig:fermiChipWithLeg} showcase the different part of the chip that were identified and used. Then it was put 
+   in correspondance to the known $520mm^2$ area of the full chip and the Table ~\ref{tab:sizeChart} has then been filled.
    \begin{figure}[H]
     \centering
         \includegraphics[width=0.7\linewidth]{pictures/FermiChipWithLegend}
@@ -642,7 +642,7 @@
     While GPU cards have a computation model well adapted to cryptography, it seems that Nvidia
     cares less and less about integer performances as we can see the multiplication throughput
     compared to the number of cores dropped in Kepler compared to Fermi and is even translated as
-    multiple instructions in Maxwell \cite{cudaprog}.
+    multiple instructions in Maxwell~\cite{cudaprog}.
    
     Nvidia's policy to keep everything closed source and secret made the original 
     goal of the project (designing a crypto-specific architecture based on Nvidia GPUs architectures)
@@ -678,7 +678,7 @@
         \item Integer matrix multiplication.
     \end{itemize}
 
-    The running times yielded are plotted in Figure \ref{fig:gpu-sim-corr}.
+    The running times yielded are plotted in Figure~\ref{fig:gpu-sim-corr}.
     \begin{figure}[H]
     \centering
         \includegraphics[width=0.9\linewidth]{graphics/comparative_graph}
@@ -687,7 +687,7 @@
         \label{fig:gpu-sim-corr}
     \end{figure}
 
-    The Pearson's correlation for each experiments are in Table \ref{tab:gpu-sim-corr}.
+    The Pearson's correlation for each experiments are in Table~\ref{tab:gpu-sim-corr}.
     \begin{figure}[H]
     \centering
         \begin{tabular}{ | r | c | }
@@ -699,7 +699,7 @@
             Integer matrix multiplication & 97\% \\ \hline
   	    \end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Size chart between pixels ($px$) and $\mu m^2$ of Fermi's elements.}
+  	\caption{Correlation between GPU running times and GPGPU-Sim simulated times.}
   	\label{tab:gpu-sim-corr}
     \end{figure}
 
