@@ -439,15 +439,6 @@
     against 18 million without instruction level parallelism. This shows that the scheduler has the
     capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
     
-\section{Additional graphics and tables}
-	\subsection{Integer multiplication: 1024 threads starting times}
-    \begin{figure}[H]
-    		\centering
-	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
-	    	\vspace{-15pt}
-	    	\captionsetup{justification=centering}    
-	    	\caption{Order in which thread batches are started.}
-    \end{figure}
 \chapter{Beyond the current architecture}
     Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
    \section{Proposed enhancement}
@@ -660,7 +651,15 @@
     \include{intersteps_times_1_SM_int}
     \include{intersteps_times_1_SM_float}
     \pagebreak
-    
+
+    \section{Integer multiplication: 1024 threads starting times}
+    \begin{figure}[H]
+    		\centering
+	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
+	    	\vspace{-15pt}
+	    	\captionsetup{justification=centering}    
+	    	\caption{Order in which thread batches are started.}
+    \end{figure}
 
 \chapter{GPGPU-Sim faithfulness}
     To make sure GPGPU-Sim was usable with the benchmarks used in this project, the basic benchmarks were
