@@ -214,7 +214,6 @@
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
     	\centering
-		\vspace{-20pt}
 	    \includegraphics[width=\scalingfactor\linewidth]{"graphics/float_vs_int_running_times"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
@@ -331,7 +330,6 @@
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
 		\centering
-		\vspace{-20pt}
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/for-sizes-superpositions"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
@@ -361,7 +359,6 @@
 	%TODO Update that hideous graph!
 	\begin{figure}[H]
 		\centering
-		\vspace{-20pt}
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
@@ -372,7 +369,6 @@
 	\subsection{Benchmark running times with mixed float multiplications and integer multiplications}
 	\begin{figure}[H]
 		\centering
-		\vspace{-20pt}
         \includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_mixed"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
@@ -431,16 +427,16 @@
    \end{figure}
 
     \subsection{Results}
-    \begin{figure}[H]\label{fig:ilp_results}
+    \begin{figure}[H]
 		\centering
-		\vspace{-20pt}
         \includegraphics[width=\scalingfactor\linewidth]{"graphics/ilp_graph"}
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
         \caption{Running times of benchmarks with two independent instruction streams.}
+        \label{fig:ilp_results}
     \end{figure}
 
-    The running time for a million operations goes down to 9 million cycles in \ref{fig:ilp_results}
+    The running time for a million operations goes down to 9 million cycles in Figure~\ref{fig:ilp_results}
     against 18 million without instruction level parallelism. This shows that the scheduler has the
     capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
     
@@ -448,7 +444,6 @@
 	\subsection{Integer multiplication: 1024 threads starting times}
     \begin{figure}[H]
     		\centering
-		\vspace{-20pt}
 	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
 	    	\vspace{-15pt}
 	    	\captionsetup{justification=centering}    
@@ -555,9 +550,9 @@
     With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
 
    \section{Estimated cost variance}
-   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$ \cite{GTX580Datasheet}
-   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} => 6,471 \mu m^2 \text{ (in $40nm$)}.\]
-   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} => 14,801 \mu m^2 \text{ (in $40nm$)}.\]
+   In order to estimate the cost change, a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT, which will have to be adapted as the Fermi's architecture is manufactured in $40nm$ \cite{GTX580Datasheet}
+   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} \Rightarrow 6,471 \mu m^2 \text{ (in $40nm$)}.\]
+   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} \Rightarrow 14,801 \mu m^2 \text{ (in $40nm$)}.\]
    The size of Fermi's component was also needed and for that a high resolution picture of the chip (\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$\cite{G5xxwiki}.
    \begin{figure}[H]
     \centering
@@ -592,19 +587,19 @@
   	\label{tab:sizeChart}
     \end{figure}
     
-    The size, in the chart, for a single CUA core is an average of a "float unit and 32-bit multiplier"
-    and a "float unit" CUDA core, so in order to find the new core size only half a 32-bit multiplier has to be added.
-    \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 3.77 \times 10^4 \mu m^2 \] 
+    The size, in the chart, for a single CUA core is an average of a ``float unit and 32-bit multiplier"
+    and a ``float unit" CUDA core, so in order to find the new core size only half a 32-bit multiplier has to be added.
+    \[\text{new core size} = \text{average CUDA core size} + \cfrac{mul_{32}}{2} = 3.77 \times 10^4 \mu m^2 .\] 
     
     So that would be a size increase of $24.4\%$ on the average core size.
     
     The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
-    \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 \]
+    \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 .\]
     Which represent an increase of $1.5\%$ on a SM size.
     
     And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM size.
     \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
-    \[\text{full chip size} + (mul_{32} \times 16) \times  16 = 5.24 \times 10^8 \mu m^2 \]
+    \[\text{full chip size} + (mul_{32} \times 16) \times  16 = 5.24 \times 10^8 \mu m^2 .\]
     Which represent an increase of $0.73\%$ on the full chip size.
    
    \subsection{Plan B: Every core with only integer support}
