@@ -468,7 +468,7 @@
   	\caption{First plan CUDA core new configuration.}
   	\label{fig:planA_cores}
    \end{figure}
-    The expected outcome in term of issue rate would stay the same for float multiplication so 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
+    The expected outcome in term of issue rate would stay the same for float multiplication, that is 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
     The advantage of this plan is that there is far less changes to the existing cores than plan B.
    \subsection{Plan B: Every core with only integer support}
    In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
@@ -603,7 +603,7 @@
    \[u(\text{FP}_{24}\text{INT}_{32})  =  6.07 \times 10^4 \mu m^2 - u(\text{FP}_{24}).\]
    By an approximation it can be determined that: \[\text{FP}_{24} = mul_{24} * 120\% = 0.78 \times 10^4  \mu m^2.\]
    And then: \[\text{FP}_{24}\text{INT}_{32} = \text{FP}_{24} - mul_{24} + mul_{32} = 1.61 \times 10^4 \mu m^2.\]
-   The size of the different CUDA cores should be relative to their units so it is that:
+   The size of the different CUDA cores should be relative to their units, it follows that:
    \[\alpha = \cfrac{u(\text{FP}_{24})}{\text{FP}_{24}} = \cfrac{u(\text{FP}_{24}\text{INT}_{32})}{\text{FP}_{24}\text{INT}_{32}}.\]
    As the value for $u(\text{FP}_{24}\text{INT}_{32})$ in function of $u(\text{FP}_{24})$ is known. It is found that:
    \[ u(\text{FP}_{24}) = 1.97 \times 10^4 \mu m^2 \text{ and, more interestingly : } \alpha = 2.52.\]
