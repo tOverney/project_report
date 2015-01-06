@@ -80,7 +80,7 @@
     An algorithm that is constantly used in cryptography is the Montgomery multiplication,
     a special kind of modular multplication. Implementing such an operation in hardware can
     be done in many ways, one of the most efficient is the rolled implementation described
-    by the algorithm ~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
+    by the algorithm~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
     by software for the multiplication And that can be unrolled for the hardware implementation
     in order to allow for pipelining.
     
@@ -128,8 +128,8 @@
     guide to Nvidia's Fermi architecture and its vocabulary:
     \section{Streaming Multiprocessors}
     The largest building block inside the Fermi architecture is the 
-    \emph{Streaming multiprocessor} (Figure ~\ref{fig:SM} on page 
-    ~\pageref{fig:SM}) abbreviated SM in this report. The GTX580 card is equipped
+    \emph{Streaming multiprocessor} (Figure~\ref{fig:SM} on page~\pageref{fig:SM})
+    abbreviated SM in this report. The GTX580 card is equipped
     with 16 of these SMs.
     \begin{figure}[H]
     \centering
@@ -286,8 +286,8 @@
     operations goes up at 576 threads. This would imply that every pipeline of
     the SM is perfectly filled with 576 threads. Dividing 576 threads by
     the 32 cores gives a pipeline length of 18. In addition, the cost increase
-    is suspected to be $\cfrac{1}{9}$ of the base cost as the scheduling is expected to be
-    something like described in the following schematic:
+    is suspected to be $1/9^\text{th}$ of the base cost as the scheduling is expected to be
+    something like described in Table~\ref{fig:fp_prediction_513}.
     
     \begin{figure}[H]
       \centering
@@ -336,7 +336,7 @@
         \label{fig:for-cost}
 	\end{figure}
     
-    Figure ~\ref{fig:for-cost} suggests that only a insignificant amount of time is spent by the loop
+    Figure~\ref{fig:for-cost} suggests that only a insignificant amount of time is spent by the loop
     iterations' instructions.
 
 \section{Mixing float and integer multiplication}
@@ -510,8 +510,8 @@
   	\label{tab:1stconfig}
     \end{figure}
 
-    To simulate the changes, the following configuration is used (Table ~\ref{tab:2ndconfig}
-    illustrates the changes from Table ~\ref{tab:1stconfig}):
+    To simulate the changes, the following configuration is used (Table~\ref{tab:2ndconfig}
+    illustrates the changes from Table~\ref{tab:1stconfig}):
     \begin{figure}[H]
     \centering
         \begin{tabular}{ | l | l | }
@@ -528,7 +528,7 @@
     \end{figure}
 
     Launching an integer multiplication benchmark on both configurations yields the running
-    times illustrated in ~\ref{fig:time_improvement}. 
+    times illustrated in~\ref{fig:time_improvement}. 
     \begin{figure}[H]
     \centering
         \includegraphics[width=0.9\linewidth]{graphics/improvement-graph}
