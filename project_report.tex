@@ -19,7 +19,7 @@
 
 \begin{document}
 
-\title{Insert Appropriate Title Here}
+\title{Studying the Fermi architecture to improve the Integer capabilities for cryptology}
 \author{Cl\'{e}ment Humbert, Tristan Overney\and Paolo Ienne, Andrea Miele, Ewaida Mohsen (Supervisors)}
 \date{\today}
 \maketitle
@@ -32,13 +32,13 @@
 
 \chapter{Introduction}
 
-    Due to their SIMD nature, GPUs have been used in different scientific fields to perform
+    Due to their computing power, GPUs have been used in different scientific fields to perform
     non-graphical computations for a while. They're used for particle and molecular dynamic 
     modeling, astrophysic and fluid mechanic modeling.
-    More recently they've been used for cryptographic applications and in particular
-    to factorize large numbers in an attempt to compromise RSA encryption~\cite{cofact14}.
+    More recently they've been used to investigate the possibility of assessing the security of
+    cryptographic applications, in particular RSA and elliptic curves encryption~\cite{cofact14}.
     Cryptography-related applications make heavy use of very large integer operations.
-    Here's an algorithm as example from~\cite{cofact14}:
+    Here's a building block of the algorithms used~\cite{cofact14}:
     \begin{algorithm}
     \caption{Large operands multiplication}\label{alg:mulalgo}
     \begin{algorithmic}[1]
@@ -63,21 +63,21 @@
     around floating-point number operations, for older GPUs it was single-precision
     floating-point number (which will be referred to as float from now on) operations and
     on more recent GPUs tendency is to focus on double precision floating-point number operations.
-    Fermi generation is the last generation to have decent integer multiplication performances
-    compared to its float performance. It is one of the reason it was chosen for this project.
+    Fermi generation is the last generation to have good integer multiplication performances
+    compared to its float performance. It is one of the reasons it was chosen for this project.
 
 \section{Goals}
     The aim of this project is to study and identify the limitations of GPUs
-    when used for cryptography and large integers computation in order to suggest
-    hardware changes with integer capabilities appropriate for integer-heavy applications.
+    when used for cryptography and application using large integers arithmetic in order to suggest
+    hardware changes accordingly.
 
 \chapter{First approach}
     The first idea to enhance the cryptographic capabilities of the GPU is to
     build crypto specific hardware into the original hardware to expose new 
     operations (in the form of assembly opcodes) to the developers with the 
-    shortest latency possible. 
+    shortest possible latency. 
     
-    An algorithm that is constantly used in cryptography is the Montgomery multiplication,
+    An algorithm that is constantly used in cryptography is montgomery multiplication,
     a special kind of modular multplication. Implementing such an operation in hardware can
     be done in many ways, one of the most efficient is the rolled implementation described
     by the algorithm~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
@@ -106,7 +106,7 @@
     \end{algorithmic}
     \end{algorithm}
     
-    Other ways to do the cryptography enhancement would be to have part of such
+    Other ways to enhance cryptography would be to have part of such
     an algorithm implemented in hardware and the rest in software.
     Such as multiplications of numbers larger than 32bits.
     
@@ -119,7 +119,7 @@
 
     To determine the speed/size of the new components the original cores have to
     be studied as not much is known from Nvidia sources. In order to understand 
-    the cores and be able to suggest meaningful changes, a serie of microbenchmarking 
+    the cores structure and be able to suggest meaningful changes, a serie of microbenchmarking 
     experiments had to be done. 
 
 
@@ -188,10 +188,10 @@
 \section{Methods}
 	To get informations about the microarchitecture of the CUDA cores, a serie 
     of specially crafted CUDA kernels were used. These usually contain large 
-    batches of instructions that were timed with the assistance of the \texttt{clock64()} 
+    batches of instructions that were timed using the \texttt{clock64()} 
     function offered by the CUDA API.
 
-	The benchmark programs have been ran on a machine equipped with an Nvidia
+	The benchmark programs have been run on a machine equipped with an Nvidia
     GeForce GTX 580 GPU used by Miele et al.~\cite{cofact14}.
 
 \section{Pipeline properties}
@@ -231,7 +231,7 @@
     Figure~\ref{fig:fp_prediction_512}
     represents the hypothesis made about the pipeline depth when 576 threads are running, $C_1$ to
     $C_{32}$ are the core of the single SM on which the experiment has been run. (1 to 16 is the
-    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the $k^{\text{th}}$ instruction of the thread number $j$. 
+    first core group and 17 to 32 is the second one.) $t_{j,k}$ is the $k^{\text{th}}$ instruction of thread $j$. 
         \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
@@ -253,8 +253,7 @@
     Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 288
     threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
     has been run. (1 to 16 is the first core group and 17 to 32 is the second one.). The first
-    group core is provided in integer multiplication but the second. $t_{j,k}$ is the $k^{\text{th}}$ instruction of the thread number
-    $j$.
+    core group is provided in integer multiplication but the second. $t_{j,k}$ is the $k^{\text{th}}$ instruction of thread $j$.
    \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
@@ -344,7 +343,7 @@
 	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
     integer multiplication able to run parallely on an SM was only half the number of 
     float multiplication. Leading to the conclusion that only one of
-    the two 16 cores group of an SM was equipped with integer. The following experiments issue 
+    the two 16 core groups of an SM was equipped with integer. The following experiments issue 
     integer multiplication in parallel to float operations to confirm this hypothesis.
 	\subsection{Benchmark running times, 1 float multiplication for 1 integer multiplication}
 	If indeed only 1 out of 2 cores group can run integer multiplication then
@@ -376,7 +375,7 @@
 
     \subsection{Results}
     The running times appear to be bound by those of the integer multiplication but is no higher than
-    when only integer multiplications are ran, this confirms the hypothesis that only 16 of the 32
+    when only integer multiplications are run, this confirms the hypothesis that only 16 of the 32
     CUDA core are equipped with integer multipliers. 
 
 \section{Results}
@@ -390,7 +389,7 @@
 
     It also appears rather clearly that, while 32 cores per SM are advertised by
     Nvidia, only 16 are equipped with integer multipliers; allowing only 18 integer
-    multipliers to be scheduled every 18 cycles.
+    multiplications to be scheduled every 18 cycles.
     
     \subsection{Prospects}
     From the previous observations the following ideas are expected to drastically
@@ -664,7 +663,7 @@
 \chapter{GPGPU-Sim faithfulness}
     To make sure GPGPU-Sim was usable with the benchmarks used in this project, the basic benchmarks were
     ran on the GTX 580 and on GPGPU-Sim with its default GTX 480 configuration (in which the only difference
-    between the GTX 580 and GTX 480 is the number of SM). The benchmark ran are:
+    between the GTX 580 and GTX 480 is the number of SMs). The benchmark we have run are:
     \begin{itemize}
         \item Float multiplication benchmark;
         \item Integer multiplication benchmark;
@@ -697,8 +696,7 @@
   	\label{tab:gpu-sim-corr}
     \end{figure}
 
-    While GPGPU-Sim has a higher clock count than the GTX 580 and its evolution is quite different, the running times are still strongly correlated and it was elected to use GPGPU-Sim.
-
+    While GPGPU-Sim has a higher clock count than the GTX 580 and its evolution is quite different, the running times are still strongly correlated.
    
    \bibliography{project_report}{}
    \bibliographystyle{plain}
