@@ -393,7 +393,7 @@
     multipliers to be scheduled every 18 cycles.
     
     \subsection{Prospects}
-    From the previous observation the following ideas are expected to drastically
+    From the previous observations the following ideas are expected to drastically
     improve the integer computation performances while maintaining a stable (if not
     lower) cost in transistors:
     \begin{itemize}
@@ -540,9 +540,9 @@
     With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
 
    \section{Estimated cost variance}
-   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT. Which will have to be adapted as the Fermi's architecture is engraved in $40nm$~\cite{GTX580Datasheet}
-   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} => 6,471 \mu m^2 \text{ (in $40nm$)}.\]
-   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} => 14,801 \mu m^2 \text{ (in $40nm$)}.\]
+   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT, which will have to be adapted as the Fermi's architecture is manufactured in $40nm$~\cite{GTX580Datasheet}
+   \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} \Rightarrow 6,471 \mu m^2 \text{ (in $40nm$)}.\]
+   \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} \Rightarrow 14,801 \mu m^2 \text{ (in $40nm$)}.\]
    The size of Fermi's component was also needed and for that a high resolution picture of the chip (Figure ~\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$~\cite{G5xxwiki}.
    \begin{figure}[H]
     \centering
