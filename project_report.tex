@@ -37,7 +37,7 @@
     modeling, astrophysics and fluid mechanic modeling.
     More recently they've been used to investigate the possibility of assessing the security of
     cryptographic applications, in particular RSA and elliptic curves encryption~\cite{cofact14}.
-    Cryptography-related applications make heavy use of very large integer operations.
+    Cryptoglogy-related applications make heavy use of very large integer operations.
     Here's a building block of the algorithms used~\cite{cofact14}:
     \begin{algorithm}
     \caption{Large operands multiplication}\label{alg:mulalgo}
@@ -68,19 +68,18 @@
 
 \section{Goals}
     The aim of this project is to identify the limitations of Fermi GPUs
-    when used for cryptography and applications using large integers arithmetic in order to suggest
+    when used for cryptology and applications using large integers arithmetic in order to suggest
     hardware changes accordingly.
 
 \chapter{First approach}
-    The first idea to enhance the cryptographic capabilities of the Fermi GPU is to
+    The first idea to enhance the cryptographic capabilities of the Fermi GPU was to
     build crypto specific hardware into the original hardware to expose new 
     operations (in the form of assembly opcodes) to the developers with the 
     shortest possible latency. 
     
-    An algorithm that is constantly used in cryptography is montgomery multiplication,
-    a special kind of modular multiplication. Implementing such an algorithm in hardware can
-    be done in many ways, one of the most efficient is the rolled implementation described
-    by Algorithm~\ref{alg:montgomery}. Its operands $X$ and $Y$ are already prepared in software for the montgomery multiplication.
+    Montgomery multiplication, a special kind of modular multiplication, is an algorithm that is constantly used
+    in cryptology; implementing it in hardware can be done in many ways.
+    One of the most efficient way is the rolled implementation described by Algorithm~\ref{alg:montgomery}. Its operands $X$ and $Y$ are already prepared in software for the Montgomery multiplication.
     Algorithm~\ref{alg:montgomery} should be unrolled for the hardware implementation thus allowing to pipeline it.
     
     \begin{algorithm}
@@ -105,9 +104,9 @@
     \end{algorithmic}
     \end{algorithm}
     
-    Other ways to enhance cryptography would be to have part of such
-    an algorithm implemented in hardware and the rest in software.
-    Such as multiplications of numbers larger than 32bits.
+    Another way to enhance cryptology performances is to have part of such
+    an algorithm implemented in hardware, such as multiplications
+    of numbers larger than 32bits, and the rest in software.
     
 
     The impact of the new opcodes were to be measured with the assistance of
@@ -117,10 +116,10 @@
     instruction's latency).
 
     To determine the speed/size of the new components the original cores have to
-    be studied as not much is known from Nvidia sources. In order to understand 
+    be studied, as not much is known from Nvidia sources. In order to understand 
     the cores structure and be able to suggest meaningful changes, a series of microbenchmarking 
     experiments had to be done. 
-
+    %TODO pourquoi on a pas fait ça.
 
 \chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
@@ -129,7 +128,7 @@
     The largest building block inside the Fermi architecture is the 
     \emph{Streaming multiprocessor} (Figure~\ref{fig:SM} on page~\pageref{fig:SM})
     abbreviated SM in this report. The GTX580 card is equipped
-    with 16 of these SMs.
+    with 16 of these SMs. %TODO dire au debut benchmark
     \begin{figure}[H]
     \centering
         \includegraphics[width=0.75\linewidth]{pictures/Fermi}
@@ -141,20 +140,16 @@
     Each SM is composed of the following computation blocks~\cite{fermiwhitepap}:
     \begin{itemize}
         \item 32 CUDA cores in two groups of 16,
-        \item 16 load/store units (LD/ST on the figure)
+        \item 16 load/store units (LD/ST on the figure),
         \item 4 Special Functions Units (SFUs) dedicated to more complex
               arithmetic functions such as sines and logarithms.
     \end{itemize}
     
-    As the SFU is dedicated to complex float operations it's already an area
-    that can be reused for integer computation components, thus it's not part
-    of the following research. The focus of the experiments are the CUDA cores.
-    
-    Integer is supported with at most 32-bits in Fermi.
+    As the SFU is dedicated to complex float operations, it can be replaced by integer computation components,
+    thus it does not require any further research in this project. The focus of the experiments are the CUDA cores.
 
     \section{CUDA Cores}
-    Figure~\ref{fig:CUDACore} is the representation of what a CUDA core is,
-    according to Nvidia~\cite{fermiwhitepap}.
+    Figure~\ref{fig:CUDACore} represents a CUDA core according to Nvidia~\cite{fermiwhitepap}.
     
     \begin{figure}[H]
     \centering
@@ -165,27 +160,27 @@
     \end{figure}
     
     From Figure~\ref{fig:CUDACore} the notion of twice 16 cores can be
-    adjusted to 2x16 integers ALUs and 2x16 float ALUs.
+    adjusted to 2x16 integers ALUs and 2x16 float ALUs. Integer is supported with at most 32-bits in Fermi.
 
     \section{Basics of Fermi's scheduling}
         \subsection{Grids and blocks} 
-        A CUDA kernel (that is: a section of code that will run on the GPU) is
-        launched with two parameters: a grid size and a block size. The grid 
+        A CUDA kernel (i.e.: a section of code that will run on the GPU) is
+        launched with two parameters, a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
         The block size determines how many threads will run the code inside each
-        SM~\cite{cudaprog}. As the interesting properties are those of a single SM or even, single
-        core, every benchmarking experiment was done using a grid size of one.
+        SM~\cite{cudaprog}. As the interesting properties are those of a single SM or even single
+        core, every benchmarking experiment was done using a grid size of 1.
 
         \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
-        of 32 threads. Each scheduling cycle, the scheduler selects two
+        of 32 threads. During each scheduling cycle, the scheduler selects two
         warps, for each of these it schedules 16 threads (making it 32
         threads scheduled, coming from two warps)~\cite{cudaprog}.
 
 \chapter{Benchmarking}
 
 \section{Methods}
-	To get informations about the microarchitecture of the CUDA cores, a series 
+	To get information about the microarchitecture of the CUDA cores, a series 
     of specially crafted CUDA kernels were used. These usually contain large 
     batches of instructions that were timed using the \texttt{clock64()} 
     function offered by the CUDA API.
@@ -204,11 +199,12 @@
     times of the benchmark program and the number of threads running in parallel in
     a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
+	%TODO couper la phrase
     The running times are expected to be slightly higher for the integer
-    multiplications, as GPUs are optimized for float computation
-    but to deteriorate in a similar fashion (begin to deteriorate
-    at the same point, at the same rate) due to each core being equipped with
-    integer and float ALUs.
+    multiplication than for the float multiplication, as GPUs are optimized for float computation
+    and the performance should decrease faster when increasing the number of parallel threads running for the integer
+    than the float as the throughput for the integer multiplication is indicated to be only half the float multiplication's
+    in the CUDA Programming Guide~\cite{cudaprog}. For both operations, it is expected that after the deterioration has started the degradation rate will be the same. 
     
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
@@ -220,12 +216,11 @@
         \label{fig:int_fp_comp}
     \end{figure}
 	
-    The results are against the expectations, Figure~\ref{fig:int_fp_comp} depicts the results of the first experiment,
-    and it shows that the integer multiplication times starting to grow at 289 threads in the block against
+    Figure~\ref{fig:int_fp_comp} depicts the results of the first experiment,
+    and it shows that the integer multiplication times start to grow at 289 threads in the block against
     577 for the float multiplications.
     
-    The flat line for the floating point pipeline means that up to 576 threads fill the pipeline and almost finish at
-    the same time (few cycles difference between threads).
+    The flat line for the floating point pipeline means that up to 576 threads fill the pipeline and almost finish simultaneously (few cycles difference between threads).
     Since we have 32 cores, then we compute the pipeline depth as $\cfrac{576}{32} = 18$  stages. 
     This hypothesis seems to correlate with the running times of the integers multiplication. 
     
@@ -282,7 +277,7 @@
 \section{Understanding pipeline length and performance deterioration}
     \subsection{The experiment}
     With the results of \ref{par:pipeline_exp} in mind, it's clear that the pipelines depth 
-    must be 18. The objective of the following experiment is to determine the cost of
+    must be 18. The goal of the following experiment is to determine the cost of
     the loop used in the benchmarks to adjust the running times found and see if they match with
     the hypothesis about pipeline length and scheduling. 
 	\subsubsection{Expectations}
@@ -316,7 +311,7 @@
     The $\cfrac{1}{9}$ can be derived from the following formula
     \[ \cfrac{t_{\text{577threads}} - t_{\text{576threads}}}{t_{\text{576threads}}} \text{  .}\]
     The latency of an instruction is equal to the pipeline length, plus $\cfrac{1}{18}$ of
-    it for every additional warp after the $18^{\text{th}}$. Thus, the latency l of an 
+    it for every additional warp after the $18^{\text{th}}$. Thus, the latency $l$ of an 
     operation is $L + \text{max}\left(0, \left\lceil{\cfrac{N}{32} -18}\right\rceil\right)$ and to get the total
     running time of a benchmark, this latency must be added as a constant to
     represent the time the last instruction takes to get through the pipeline.
@@ -345,20 +340,20 @@
 
 \section{Mixing float and integer multiplication}
 	\subsection{The experiment}
-	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
-    integer multiplication able to run in parallel on an SM was only half the number of 
-    float multiplication. Leading to the conclusion that only one of
-    the two 16 core groups of an SM was equipped with integer. The following experiments issue 
-    integer multiplication in parallel to float operations to confirm this hypothesis.
+	The results of \ref{par:pipeline_exp} seem to point out that the number of 
+    integer multiplications able to run in parallel on an SM is only half the number of 
+    float multiplications. Leading to the conclusion that only one of
+    the two 16 core groups of an SM was equipped with integer. These experiments issue 
+    integer multiplications in parallel to float multiplications to confirm this hypothesis.
 	\subsection{Benchmark running times, 1 float multiplication for 1 integer multiplication}
-	If indeed only 1 out of 2 cores group can run integer multiplication then
+	If indeed only 1 out of 2 cores group can run integer multiplications,
     adding the same amount of float multiplications as there were integer
     multiplications should not increase the total time spent executing the benchmark 
-    program as the float multiplication can
-    be ran on the other core group (the one that does not possess integer multiplication).
+    program as the float multiplications can
+    be run on the other core group (the one that does not possess integer multipliers).
 	
-	One million multiplication of each kind has been ran on 1 to 1024 threads to
-    see if the results were comparable to the graph were there was only integer multiplication.
+	One million multiplications of each kind have been run on 1 to 1024 threads to
+    see if the results were comparable to the integer multiplications only graph (Figure~\ref{fig:int_fp_comp}).
 	\begin{figure}[H]
 		\centering
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
@@ -378,36 +373,37 @@
     \end{figure}
 
     \subsection{Results}
-    The running times appear to be bound by those of the integer multiplication but is no higher than
+    The benchmark running times appear to be bound by those of the integer multiplications but is no higher than
     when only integer multiplications are run, this confirms the hypothesis that only 16 of the 32
     CUDA core are equipped with integer multipliers. 
 
 \section{Results}
     \subsection{Pipeline structure}
     As seen during the experiments, the CUDA core's pipeline appears to be an
-    18 steps pipeline. The fact that integer multiplication and 
-    float multiplication both take the same amount
+    18 steps pipeline. The fact that integer multiplications and 
+    float multiplications both take the same amount
     of time (on a machine that's supposed to be a float computation
     optimized device) until the pipelines are filled suggests a simple,
     no-dependency-check, scheduler that fires up new instructions every 18 cycles.
 
-    It also appears rather clearly that, while 32 cores per SM are advertised by
-    Nvidia, only 16 are equipped with integer multipliers; allowing only 18 integer
+    It also appears rather clearly that the throughput for integer multiplications %, advertised by Nvidia,
+    is only 16 multiplications
+    per clock cycle per SM~\cite{cudaprog} due to the fact that, on the contrary of what Nvidia advertises, not all CUDA core (Figure~\ref{fig:CUDACore}) have a full integer unit and only 16 are equipped with integer multipliers; allowing only 16 integer
     multiplications to be scheduled every 18 cycles.
     
     \subsection{Prospects}
     From the previous observations the following ideas are expected to drastically
-    improve the integer computation performances while maintaining a stable (if not
+    improve the integer computation performance while maintaining a stable (if not
     lower) cost in transistors:
     \begin{itemize}
-        \item If any instruction is to be added (e.g.: Montgomery's multiplication, larger integer multiplication) these can take up to 18 cycles without having to modify any aspect of the scheduler.
+        \item Any new instructions (e.g. Montgomery multiplication, larger integer multiplication, etc.) can use up to 18 cycles without needing to modify any aspect of the scheduler.
         \item A large amount of integer computation power can be added at low-cost as a whole 16-cores group can be totally replaced by cores dedicated to integer arithmetic.
     \end{itemize}
 
 \section{Instruction level parallelism}
-    To check if the SM scheduler are aware of dependencies, a benchmark with two streams of independent instructions has been ran with an execution
-    scheme as described by Figure ~\ref{fig:fp_prediction_64_halfdep}.
-    As there is no dependency between the even and odd instructions and there isn't any "new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
+    To check if the SM scheduler can detects dependencies, a benchmark with two streams of independent instructions has been run with an execution
+    scheme as described by Figure~\ref{fig:fp_prediction_64_halfdep}.
+    As there is no dependency between the even and odd instructions and there isn't any ``new" thread to run, the scheduler looks for the next instruction of the threads belongings to the first two warps.
 \begin{figure}[H]
       \centering
        \begin{tabular}{ | r || c | c | c | c || c | c | c | }
@@ -440,12 +436,12 @@
 
     The running time for a million operations goes down to 9 million cycles in Figure~\ref{fig:ilp_results}
     against 18 million without instruction level parallelism. This shows that the scheduler has the
-    capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
+    ability to detect and manage instructions dependencies to exploit the cores to the maximum.
     
 \chapter{Beyond the current architecture}
-    Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer, and it is now possible to say what could possibly be changed and what not.
+   The results of those experiments give a much clearer picture of the internal functioning of a Fermi SM, and it is now possible to determine which changes can be done.
    \section{Proposed enhancement}
-   The most obvious upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
+   The most obvious upgrade that can be implemented is to have two identical core groups in order to boost the issue rate of integer multiplications up to a float multiplication-like performance.
    \begin{figure}[H]
       \centering
        \begin{tabular}{ | c | c | }
@@ -457,7 +453,7 @@
   	\caption{Current CUDA core configuration.}
   	\label{fig:current_cores}
    \end{figure}
-   There is two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
+   There are two distinct approaches to this modification which are described as plan A and plan B in the following part of the report.
    \subsection{Plan A: 32-bit integer multiplier for every core}
     In this first scenario, the change would be to add a 32-bit multiplier to every core that doesn't have one yet. Consequently, all 32 cores would have a full float unit and a 32-bit multiplier.
     \begin{figure}[H]
@@ -471,7 +467,7 @@
   	\caption{First plan CUDA core new configuration.}
   	\label{fig:planA_cores}
    \end{figure}
-    The expected outcome in term of issue rate would stay the same for float multiplication, that is 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
+    The expected outcome in term of issue rate would stay the same for float multiplications, that is 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is also expected to be 32 per clock cycle per SM.
     The advantage of this plan is that there is few changes.
    \subsection{Plan B: Every core with only integer support}
    In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
@@ -489,14 +485,15 @@
    The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for
    such operand type would be removed, and the integer multiplication issue rate is expected to be close to the current float
    multiplication issue rate which is 32 per clock cycle per SM.
-   The advantage of this plan is that the new SM will be smaller than what it would be in plan A. 
+   The advantage of this plan is that the new SM will be smaller than in plan A. 
    \section{Estimated performance increase}
-    To estimate the increase in integers multiplications capabilities, GPGPU-Sim
+    To estimate the increase in integer multiplications capability, GPGPU-Sim
     is used. The base configuration is the one for GTX480 shipped with GPGPU-Sim.
     With the default configuration, GPGPU-Sim simulate integer multiplication as
-    any other operation (with two pipelines) but with a slower initiation rate.
+    any other operations (with two pipelines) but with a slower initiation rate.
     The first step to measure the performance is to simulate a one-pipeline
     multiplication with the following configuration changes:
+    %TODO Clement
     \begin{figure}[H]
     \centering
        \begin{tabular}{ | l | l | }
@@ -527,7 +524,7 @@
             operand\_collector\_num\_out\_ports\_sp & 2 \\ \hline
   	    \end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Two multipliers simulation configuration..}
+  	\caption{Two multipliers simulation configuration.}
   	\label{tab:2ndconfig}
     \end{figure}
 
@@ -544,10 +541,10 @@
     With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
 
    \section{Estimated cost variance}
-   In order to estimate the cost change a 24-bit multiplier and a 32-bit one have been synthesized with the $65nm$ library GPSVT, which will have to be adapted as the Fermi's architecture is manufactured in $40nm$~\cite{GTX580Datasheet}
+   In order to estimate the cost change, a 24-bit and a 32-bit multipliers have been synthesized with the $65nm$ library GPSVT, which will have to be adapted as the Fermi's architecture is manufactured in $40nm$~\cite{GTX580Datasheet}:
    \[\text{24-bit multiplier} = mul_{24} = 10,354 \mu m^2 \text{ (in $65nm$)} \Rightarrow 6,471 \mu m^2 \text{ (in $40nm$)}.\]
    \[\text{32-bit multiplier} = mul_{32} = 24,052 \mu m^2 \text{ (in $65nm$)} \Rightarrow 14,801 \mu m^2 \text{ (in $40nm$)}.\]
-   The size of Fermi's component was also needed and for that a high resolution picture of the chip (Figure ~\ref{fig:fermiChip} is used in addition to the known total die size which is $520 mm^2$~\cite{G5xxwiki}.
+   The size of Fermi's component is also needed and for that a high resolution picture of the chip (Figure ~\ref{fig:fermiChip}) is used in addition to the known total die size which is $520 mm^2$~\cite{G5xxwiki}.
    \begin{figure}[H]
     \centering
         \includegraphics[width=0.7\linewidth]{pictures/FermiChip}
@@ -557,8 +554,8 @@
     \end{figure}
    
    \subsection{Plan A: 32-bit integer multiplier for every core}
-   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure~\ref{fig:fermiChip}) has been analyzed pixel by pixel with it's original size of $1200p \times 1200p$ where Figure ~\ref{fig:fermiChipWithLeg} showcase the different part of the chip that were identified and used. Then it was put 
-   in correspondance to the known $520mm^2$ area of the full chip and the Table ~\ref{tab:sizeChart} has then been filled.
+   First thing is to find out the size of a single CUDA core. To do so, the full chip picture (Figure~\ref{fig:fermiChip}) has been analyzed pixel by pixel with its original size of $1200p \times 1200p$ where Figure ~\ref{fig:fermiChipWithLeg} brings out the different part of the chip that were identified and used. Then it was put 
+   in correspondance to the known $520mm^2$ area of the full chip and the Table~\ref{tab:sizeChart} has then been filled.
    \begin{figure}[H]
     \centering
         \includegraphics[width=0.7\linewidth]{pictures/FermiChipWithLegend}
@@ -587,19 +584,19 @@
     
     Thus, the changes would lead to a size increase of $24.4\%$ of the average core size.
     
-    The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
+    The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores that doesn't have one already.)
     \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 .\]
-    Which represent an increase of $1.5\%$ on a SM size.
+    Which represents an increase of $1.5\%$ of a SM size.
     
-    And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM size.
-    \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
+    And eventually, the new size for the whole chip equals 16 times the difference between the old and the new SM size.
+    \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{old SM size}) \times 16 =\]
     \[\text{full chip size} + (mul_{32} \times 16) \times  16 = 5.24 \times 10^8 \mu m^2 .\]
-    Which represent an increase of $0.73\%$ on the full chip size.
+    Which represents an increase of $0.73\%$ of the full chip size.
    
    \subsection{Plan B: Every core with only integer support}
    Here the task is to remove the float unit/ float and integer fused unit and replace it with an integer only unit.
    
-   In this section $u(\text{FP}_{24})$ represent the CUDA core size that possesses a float unit with only a 24-bit multiplier; $u(\text{FP}_{24}\text{INT}_{32})$ represent the CUDA core size that possesses a float and integer fused unit with a 32-bit multiplier; $u(\text{INT}_{32})$ represent the CUDA core size that only possesses a integer unit with a 32-bit multiplier.
+   In this section $u(\text{FP}_{24})$ represents the CUDA core size that possesses a float unit with only a 24-bit multiplier; $u(\text{FP}_{24}\text{INT}_{32})$ represents the CUDA core size that possesses a float and integer fused unit with a 32-bit multiplier; $u(\text{INT}_{32})$ represents the CUDA core size that only possesses a integer unit with a 32-bit multiplier.
    It is known that:
    \[\
    16u(\text{FP}_{24}) + 16u(\text{FP}_{24}\text{INT}_{32}) = \text{32 CUDA core size} = 9.71 \times 10^5 \mu m^2. \]
@@ -609,35 +606,34 @@
    And then: \[\text{FP}_{24}\text{INT}_{32} = \text{FP}_{24} - mul_{24} + mul_{32} = 1.61 \times 10^4 \mu m^2.\]
    The size of the different CUDA cores should be relative to their units, it follows that:
    \[\alpha = \cfrac{u(\text{FP}_{24})}{\text{FP}_{24}} = \cfrac{u(\text{FP}_{24}\text{INT}_{32})}{\text{FP}_{24}\text{INT}_{32}}.\]
-   As the value for $u(\text{FP}_{24}\text{INT}_{32})$ in function of $u(\text{FP}_{24})$ is known. It is found that:
+   As the value of $u(\text{FP}_{24}\text{INT}_{32})$ in function of $u(\text{FP}_{24})$ is known. It is found that:
    \[ u(\text{FP}_{24}) = 1.97 \times 10^4 \mu m^2 \text{ and, more interestingly : } \alpha = 2.52.\]
-   And finally, it is possible to find the size of the new CUDA core size for plan B as such:
+   And finally, it is possible to find the size of the new CUDA core size for plan B:
    \[ \text{new CUDA core size} = u(\text{INT}_{32}) = \alpha \times \text{INT}_{32} = 3.73 \times 10^4 \mu m^2.\]
    Which in this case would represent a $22.9\%$ increase for the size of a CUDA core.
-   The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores who doesn't have one already.)
+   The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores which doesn't have one already.)
     \[\text{new SM size} = \text{SM size} + (\text{average CUDA core size} - u(\text{INT}_{32})) \times 16 = 1.51 \times 10^6 \mu m^2. \]
-    Which represent an increase of $0.74\%$ on a SM size.
+    Which represents an increase of $0.74\%$ of a SM size.
     
-    And eventually, the new size for the whole chip is 16 times the difference between the old SM's size and the new SM size.
+    And eventually, the new size of the whole chip is 16 times the difference between the old and the new SM size.
     \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
     \[\text{full chip size} + ((\text{average CUDA core size} - u(\text{INT}_{32})) \times 16) \times  16 = 5.22 \times 10^8 \mu m^2. \]
-    Which represent an increase of $0.34\%$ on the full chip size.
+    Which represents an increase of $0.34\%$ of the full chip size.
    
 \chapter{Conclusion}
     In this project it has been made obvious that the integer performances 
-    (and a fortiori the crypto performances) of Nvidia GPUs are due to an 
-    economy on integer hardware made on purpose but that spares little area 
-    for a consequent drop in performances. 
+    (and a fortiori the crypto performances) of Nvidia GPUs are due to an intentional 
+    economy on integer hardware but that spares little area for a consequent drop in performances. 
     
-    While GPU cards have a computation model well adapted to cryptography, it seems that Nvidia
-    cares less and less about integer performances as we can see the multiplication throughput
+    While GPU cards have a computation model well adapted to cryptology, it seems that Nvidia
+    cares less and less about integer performances, the integer multiplication throughput
     compared to the number of cores dropped in Kepler compared to Fermi and is even translated as
     multiple instructions in Maxwell~\cite{cudaprog}.
    
     Nvidia's policy to keep everything closed source and secret made the original 
     goal of the project (designing a crypto-specific architecture based on Nvidia GPUs architectures)
     impossible to attain and forced the realization of micro-benchmarking 
-    in order to find more informations on the architecture we've chosen to base our work on. We went 
+    in order to find more information on the architecture we have chosen to base our work on. We went 
     from an initial plan of designing our own many-cores crypto processor to trying to 
     reverse-engineer the work of a full team of engineers.
 
