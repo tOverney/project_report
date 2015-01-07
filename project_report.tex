@@ -6,6 +6,7 @@
 \usepackage{caption}
 \usepackage{algorithm}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage[noend]{algpseudocode}
 \usepackage[a4paper]{geometry}
 
@@ -638,7 +639,10 @@
     reverse-engineer the work of a full team of engineers.
 
   \appendix 
-   
+ 
+\chapter{Benchmarking program}
+   \lstinputlisting[language=C]{integer\_multiplication\_benchmark.cu} 
+  
 \chapter{Additional benchmarking data}
     \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
