@@ -67,12 +67,12 @@
     compared to its float performance. It is one of the reasons it was chosen for this project.
 
 \section{Goals}
-    The aim of this project is to study and identify the limitations of GPUs
+    The aim of this project is to identify the limitations of Fermi GPUs
     when used for cryptography and application using large integers arithmetic in order to suggest
     hardware changes accordingly.
 
 \chapter{First approach}
-    The first idea to enhance the cryptographic capabilities of the GPU is to
+    The first idea to enhance the cryptographic capabilities of the Fermi GPU is to
     build crypto specific hardware into the original hardware to expose new 
     operations (in the form of assembly opcodes) to the developers with the 
     shortest possible latency. 
@@ -80,8 +80,8 @@
     An algorithm that is constantly used in cryptography is montgomery multiplication,
     a special kind of modular multplication. Implementing such an operation in hardware can
     be done in many ways, one of the most efficient is the rolled implementation described
-    by the algorithm~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
-    by software for the multiplication And that can be unrolled for the hardware implementation
+    by Algorithm~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
+    by software for the multiplication and that can be unrolled for the hardware implementation
     in order to allow for pipelining.
     
     \begin{algorithm}
@@ -112,14 +112,14 @@
     
 
     The impact of the new opcodes were to be measured with the assistance of
-    GPGPU-SIM~\cite{gpgpusim09} a Fermi architecture simulator. It was determined
-    that new opcodes can be added to gpgpu-sim and included in an instruction group
+    GPGPU-Sim~\cite{gpgpusim09} a Fermi architecture simulator. It was determined
+    that new opcodes can be added to GPGPU-Sim and included in an instruction group
     to modify its latency (an unused operation could have been chosen to set the new
     instruction's latency).
 
     To determine the speed/size of the new components the original cores have to
     be studied as not much is known from Nvidia sources. In order to understand 
-    the cores structure and be able to suggest meaningful changes, a serie of microbenchmarking 
+    the cores structure and be able to suggest meaningful changes, a series of microbenchmarking 
     experiments had to be done. 
 
 
@@ -186,7 +186,7 @@
 \chapter{Benchmarking}
 
 \section{Methods}
-	To get informations about the microarchitecture of the CUDA cores, a serie 
+	To get informations about the microarchitecture of the CUDA cores, a series 
     of specially crafted CUDA kernels were used. These usually contain large 
     batches of instructions that were timed using the \texttt{clock64()} 
     function offered by the CUDA API.
@@ -218,10 +218,11 @@
 		\vspace{-15pt}
 		\captionsetup{justification=centering}
         \caption{Running times of benchmark (in cycles) against number of threads.}
+        \label{fig:int_fp_comp}
     \end{figure}
 	
-    The results are against the expectations as it's easy to see the integer
-    multiplication times starting to grow at 289 threads in the block against
+    The results are against the expectations, Figure~\ref{fig:int_fp_comp} depicts the results of the first experiment,
+    and it shows that the integer multiplication times starting to grow at 289 threads in the block against
     577 for the float multiplications.
     
     As the running time is constant up to 576 threads running in parallel and as there's 32 cores
@@ -439,7 +440,7 @@
     capability of detecting and managing instructions dependencies to exploit the cores to the maximum.
     
 \chapter{Beyond the current architecture}
-    Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer. And it was now possible to say what could possibly changed and whatnot.
+    Given the knowledge acquired with all those experiments. The internal functioning of a Fermi SM was much clearer, and it is now possible to say what could possibly be changed and what not.
    \section{Proposed enhancement}
    The most obvious upgrade that could be implemented would be to have the two core group to be identical in order to boost the issue rate of integer multiplication to a float multiplication-like performance.
    \begin{figure}[H]
@@ -468,7 +469,7 @@
   	\label{fig:planA_cores}
    \end{figure}
     The expected outcome in term of issue rate would stay the same for float multiplication, that is 32 per clock cycle per SM. But the integer multiplication issue rate, which is assumed to have become the same as the float multiplication issue rate, is expected to also be 32 per clock cycle per SM.
-    The advantage of this plan is that there is far less changes to the existing cores than plan B.
+    The advantage of this plan is that there is few changes.
    \subsection{Plan B: Every core with only integer support}
    In this second plan, instead of just adding 32-bit multiplier as in plan A; the change would be to have no more float support but instead have 32 integer only units with 32-bit multiplier.
    \begin{figure}[H]
@@ -482,13 +483,14 @@
   	\caption{Second plan CUDA core new configuration.}
   	\label{fig:planB_cores}
    \end{figure}
-   The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for such operand type would be removed.
-   And The integer multiplication issue rate is expected to be close to the current float multiplication issue rate which is 32 per clock cycle per SM.
-   The advantage of this plan is that the new SM will be smaller than what it would be in plan B. 
+   The expected outcome for that scenario would then be an issue rate of 0 per clock cycle per SM as the support for
+   such operand type would be removed, and the integer multiplication issue rate is expected to be close to the current float
+   multiplication issue rate which is 32 per clock cycle per SM.
+   The advantage of this plan is that the new SM will be smaller than what it would be in plan A. 
    \section{Estimated performance increase}
-    To estimate the increase in integers multiplications capabilities, gpgpusim
-    is used. The base configuration is the one for GTX480 shipped with gpgpusim.
-    With the default configuration, gpgpusim simulate integer multiplication as
+    To estimate the increase in integers multiplications capabilities, GPGPU-Sim
+    is used. The base configuration is the one for GTX480 shipped with GPGPU-Sim.
+    With the default configuration, GPGPU-Sim simulate integer multiplication as
     any other operation (with two pipelines) but with a slower initiation rate.
     The first step to measure the performance is to simulate a one-pipeline
     multiplication with the following configuration changes:
