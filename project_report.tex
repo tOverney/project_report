@@ -33,8 +33,8 @@
 \chapter{Introduction}
 
     Due to their computing power, GPUs have been used in different scientific fields to perform
-    non-graphical computations for a while. They're used for particle and molecular dynamic 
-    modeling, astrophysic and fluid mechanic modeling.
+    non-graphical computations for a while. They are used for particle and molecular dynamic 
+    modeling, astrophysics and fluid mechanic modeling.
     More recently they've been used to investigate the possibility of assessing the security of
     cryptographic applications, in particular RSA and elliptic curves encryption~\cite{cofact14}.
     Cryptography-related applications make heavy use of very large integer operations.
@@ -68,7 +68,7 @@
 
 \section{Goals}
     The aim of this project is to identify the limitations of Fermi GPUs
-    when used for cryptography and application using large integers arithmetic in order to suggest
+    when used for cryptography and applications using large integers arithmetic in order to suggest
     hardware changes accordingly.
 
 \chapter{First approach}
@@ -78,11 +78,10 @@
     shortest possible latency. 
     
     An algorithm that is constantly used in cryptography is montgomery multiplication,
-    a special kind of modular multplication. Implementing such an operation in hardware can
+    a special kind of modular multiplication. Implementing such an algorithm in hardware can
     be done in many ways, one of the most efficient is the rolled implementation described
-    by Algorithm~\ref{alg:montgomery}. Where operands $X$ and $Y$ would have been prepared
-    by software for the multiplication and that can be unrolled for the hardware implementation
-    in order to allow for pipelining.
+    by Algorithm~\ref{alg:montgomery}. Its operands $X$ and $Y$ are already prepared in software for the montgomery multiplication.
+    Algorithm~\ref{alg:montgomery} should be unrolled for the hardware implementation thus allowing to pipeline it.
     
     \begin{algorithm}
     \caption{Hardware Montgomery multiplier~\cite{montgomeryHard}}\label{alg:montgomery}
@@ -170,12 +169,12 @@
 
     \section{Basics of Fermi's scheduling}
         \subsection{Grids and blocks} 
-        A cuda kernel (that is: a section of code that will run on the GPU) is
+        A CUDA kernel (that is: a section of code that will run on the GPU) is
         launched with two parameters: a grid size and a block size. The grid 
         size is used to determine the number of SM on which the code will run.
         The block size determines how many threads will run the code inside each
-        SM~\cite{cudaprog}. As we're interested in the properties of single SMs or even, single
-        cores, every benchmarking experiment was done using a grid size of one.
+        SM~\cite{cudaprog}. As the interesting properties are those of a single SM or even, single
+        core, every benchmarking experiment was done using a grid size of one.
 
         \subsection{Warps}
         The second important scheduling unit is the warp. A warp consists
@@ -202,7 +201,7 @@
 	\label{par:pipeline_exp}
 	\subsubsection{Description of the experiment}
 	The first experiment aims at outlining the relation between the running
-    times of the benchmark program and the number of threads running parallely in
+    times of the benchmark program and the number of threads running in parallel in
     a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
     The running times are expected to be slightly higher for the integer
@@ -225,8 +224,9 @@
     and it shows that the integer multiplication times starting to grow at 289 threads in the block against
     577 for the float multiplications.
     
-    As the running time is constant up to 576 threads running in parallel and as there's 32 cores
-    available, the hypothesis has been formulated that the pipeline depth for the float multiplication is 18 ($\cfrac{576}{32} = 18$). 
+    The flat line for the floating point pipeline means that up to 576 threads fill the pipeline and almost finish at
+    the same time (few cycles difference between threads).
+    Since we have 32 cores, then we compute the pipeline depth as $\cfrac{576}{32} = 18$  stages. 
     This hypothesis seems to correlate with the running times of the integers multiplication. 
     
     Figure~\ref{fig:fp_prediction_512}
@@ -250,6 +250,10 @@
   	\caption{Hypothesized running scheme for 576 threads with float multiplication.}
   	\label{fig:fp_prediction_512}
    \end{figure}
+   
+    On the other hand, the flat line of the integer experiment ends on 288 threads.
+    Assuming a similar pipeline depth for the integer unit (18 stages) then we conclude that
+    $\cfrac{288}{18} = 16$ cores only support integer multiplication.
    
     Figure~\ref{fig:int_prediction_256} represents the hypothesis made about the pipeline when 288
     threads are running, $C_1$ to $C_{32}$ are the core of the single SM on which the experiment
@@ -342,7 +346,7 @@
 \section{Mixing float and integer multiplication}
 	\subsection{The experiment}
 	Information has been found in \ref{par:pipeline_exp} that was implying that the number of 
-    integer multiplication able to run parallely on an SM was only half the number of 
+    integer multiplication able to run in parallel on an SM was only half the number of 
     float multiplication. Leading to the conclusion that only one of
     the two 16 core groups of an SM was equipped with integer. The following experiments issue 
     integer multiplication in parallel to float operations to confirm this hypothesis.
@@ -355,7 +359,6 @@
 	
 	One million multiplication of each kind has been ran on 1 to 1024 threads to
     see if the results were comparable to the graph were there was only integer multiplication.
-	%TODO Update that hideous graph!
 	\begin{figure}[H]
 		\centering
     			\includegraphics[width=\scalingfactor\linewidth]{"graphics/running_times_ratio11"}
