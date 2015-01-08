@@ -6,7 +6,7 @@
 \usepackage{caption}
 \usepackage{algorithm}
 \usepackage{hyperref}
-\usepackage{listings}
+\usepackage{listingsutf8}
 \usepackage[noend]{algpseudocode}
 \usepackage[a4paper]{geometry}
 
@@ -641,8 +641,12 @@
   \appendix 
  
 \chapter{Benchmarking program}
-   \lstinputlisting[language=C]{integer\_multiplication\_benchmark.cu} 
-  
+    This code sample is the typical code that was run for an experiment. There were variations on the operations
+    inside the for loop (type, numbers of operations) and some experiments were also run without the for loop
+    and just the operations.
+   
+   \lstinputlisting[language=C, breaklines=true]{"integer_multiplication_benchmark.cu"} 
+
 \chapter{Additional benchmarking data}
     \section{Graphics intersteps data}
     The following tables describe the steps between running times in the graphics presented previously. Analyzing them may allow to deduce properties of: 
