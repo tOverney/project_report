@@ -527,17 +527,17 @@
   	\label{tab:2ndconfig}
     \end{figure}
 
-    Launching an integer multiplication benchmark on both configurations yields the running
+    Launching the Algorithm~\ref{alg:mulalgo} on both configurations yields the running
     times illustrated in~\ref{fig:time_improvement}. 
     \begin{figure}[H]
     \centering
-        \includegraphics[width=0.9\linewidth]{graphics/improvement-graph}
+        \includegraphics[width=0.9\linewidth]{graphics/enhancement_graph}
         \captionsetup{justification=centering}
         \caption{Running times on the default pipeline and on the improved architecture.}
         \label{fig:time_improvement}
     \end{figure}
     
-    With higher occupancy, the improved architecture runs the multiplication benchmark in 58\% of the original time.
+    With higher occupancy, the improved architecture runs the large multiplication in 53\% of the original time, an 85\% improvement.
 
    \section{Estimated cost variance}
    In order to estimate the cost change, a 24-bit and a 32-bit multipliers have been synthesized with the $65nm$ library GPSVT, which will have to be adapted as the Fermi's architecture is manufactured in $40nm$~\cite{GTX580Datasheet}:
