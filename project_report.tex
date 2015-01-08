@@ -493,8 +493,8 @@
     With the default configuration, GPGPU-Sim simulate integer multiplication as
     any other operations (with two pipelines) but with a slower initiation rate.
     The first step to measure the performance is to simulate a one-pipeline
-    multiplication with the following configuration changes:
-    %TODO Clement
+    multiplication with the following configuration changes in \text{gpgpusim.config}.
+    Configuration options details can be found on the GPGPU-Sim wiki~\cite{gpgpusimwiki}:
     \begin{figure}[H]
     \centering
        \begin{tabular}{ | l | l | }
@@ -508,7 +508,7 @@
 
   	    \end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Single multiplier simulation configuration.}
+  	\caption{16 multipliers simulation configuration.}
   	\label{tab:1stconfig}
     \end{figure}
 
@@ -525,7 +525,7 @@
             operand\_collector\_num\_out\_ports\_sp & 2 \\ \hline
   	    \end{tabular}
   	\captionsetup{justification=centering}
-  	\caption{Two multipliers simulation configuration.}
+  	\caption{32 multipliers simulation configuration.}
   	\label{tab:2ndconfig}
     \end{figure}
 
