@@ -663,8 +663,11 @@
 	    	\includegraphics[width=\scalingfactor\linewidth]{"graphics/starting_times_ratio31"}
 	    	\vspace{-15pt}
 	    	\captionsetup{justification=centering}    
-	    	\caption{Order in which thread batches are started.}
+	    	\caption{Order in which thread are started.}\label{fig:startingtimes}
     \end{figure}
+    Figure~\ref{fig:startingtimes} shows the starting times of threads by their id. It confirms
+    the fact that the scheduler starts warps half by half (16 threads by 16 threads).
+    
 
 \chapter{GPGPU-Sim faithfulness}
     To make sure GPGPU-Sim was usable with the benchmarks used in this project, the basic benchmarks were
