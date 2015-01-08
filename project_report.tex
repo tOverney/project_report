@@ -116,11 +116,11 @@
     to modify its latency (an unused operation could have been chosen to set the new
     instruction's latency).
 
-    To determine the speed/size of the new components the original cores have to
-    be studied, as not much is known from Nvidia sources. In order to understand 
+    To determine the speed/size of the new components, the original cores have to
+    be studied, as not much is known from Nvidia sources. Due to the lack of information
+    this first approach was put aside and to understand 
     the cores structure and be able to suggest meaningful changes, a series of microbenchmarking 
     experiments had to be done. 
-    %TODO pourquoi on a pas fait ça.
 
 \chapter{Fermi's architecture}
     Before diving into the experiments and their results here's a quick-start
@@ -128,8 +128,7 @@
     \section{Streaming Multiprocessors}
     The largest building block inside the Fermi architecture is the 
     \emph{Streaming multiprocessor} (Figure~\ref{fig:SM} on page~\pageref{fig:SM})
-    abbreviated SM in this report. The GTX580 card is equipped
-    with 16 of these SMs. %TODO dire au debut benchmark
+    abbreviated SM in this report.
     \begin{figure}[H]
     \centering
         \includegraphics[width=0.75\linewidth]{pictures/Fermi}
@@ -201,11 +200,8 @@
     a single block (the threads reside on one SM).
 	\subsubsection{Expectations}
 	%TODO couper la phrase
-    The running times are expected to be slightly higher for the integer
-    multiplication than for the float multiplication, as GPUs are optimized for float computation
-    and the performance should decrease faster when increasing the number of parallel threads running for the integer
-    than the float as the throughput for the integer multiplication is indicated to be only half the float multiplication's
-    in the CUDA Programming Guide~\cite{cudaprog}. For both operations, it is expected that after the deterioration has started the degradation rate will be the same. 
+    Integer multiplications overall performances are expected to be worse than float multiplication as indicated
+    in~\cite{cudaprog}. The reason for it is what these experiments are trying to discover.
     
 	\subsubsection{Results and analysis}
     \begin{figure}[H]
@@ -218,11 +214,13 @@
     \end{figure}
 	
     Figure~\ref{fig:int_fp_comp} depicts the results of the first experiment,
-    and it shows that the integer multiplication times start to grow at 289 threads in the block against
+    and shows that the integer multiplication times start to grow at 289 threads in the block against
     577 for the float multiplications.
-    
-    The flat line for the floating point pipeline means that up to 576 threads fill the pipeline and almost finish simultaneously (few cycles difference between threads).
-    Since we have 32 cores, then we compute the pipeline depth as $\cfrac{576}{32} = 18$  stages. 
+   
+    The flat line of integer and float multiplication are superposed up to 288 threads, meaning that
+    either both multiplication have the same latency or they're latencies are hidden by a pipeline.
+    The flat line for the floating point pipeline would mean that up to 576 threads the pipeline is not filled.
+    Since an SM has 32 cores, we compute the pipeline depth as $\cfrac{576}{32} = 18$  stages. 
     This hypothesis seems to correlate with the running times of the integers multiplication. 
     
     Figure~\ref{fig:fp_prediction_512}
