@@ -583,7 +583,7 @@
     Thus, the changes would lead to a size increase of $24.4\%$ of the average core size.
     
     The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores that doesn't have one already.)
-    \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^6 \mu m^2 .\]
+    \[\text{new SM size} = \text{SM size} + mul_{32} \times 16 = 1.53 \times 10^7 \mu m^2 .\]
     Which represents an increase of $1.5\%$ of a SM size.
     
     And eventually, the new size for the whole chip equals 16 times the difference between the old and the new SM size.
@@ -609,14 +609,13 @@
    And finally, it is possible to find the size of the new CUDA core size for plan B:
    \[ \text{new CUDA core size} = u(\text{INT}_{32}) = \alpha \times \text{INT}_{32} = 3.73 \times 10^4 \mu m^2.\]
    Which in this case would represent a $22.9\%$ increase for the size of a CUDA core.
-   The new SM size can be computed by adding 16 times the 32-bit multiplier cost (once for each cores which doesn't have one already.)
-    \[\text{new SM size} = \text{SM size} + (\text{average CUDA core size} - u(\text{INT}_{32})) \times 16 = 1.51 \times 10^6 \mu m^2. \]
-    Which represents an increase of $0.74\%$ of a SM size.
+   The new SM size can be computed by removing the 32 old CUDA cores and putting 32 updated ones which are stripped from float support.
+    \[\text{new SM size} = \text{SM size} + 32 \times ( u(\text{INT}_{32}) - \text{average CUDA core size}) = 1.52 \times 10^7 \mu m^2. \]
+    Which represents an increase of $1.48\%$ of a SM size.
     
     And eventually, the new size of the whole chip is 16 times the difference between the old and the new SM size.
-    \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 =\]
-    \[\text{full chip size} + ((\text{average CUDA core size} - u(\text{INT}_{32})) \times 16) \times  16 = 5.22 \times 10^8 \mu m^2. \]
-    Which represents an increase of $0.34\%$ of the full chip size.
+    \[\text{new chip size} = \text{full chip size} + (\text{new SM size} - \text{SM size}) \times 16 = 5.23 \times 10^8 \mu m^2. \]
+    Which represents an increase of $0.68\%$ of the full chip size.
    
 \chapter{Conclusion}
     In this project it has been made obvious that the integer performances 
